@@ -1,0 +1,17 @@
+{
+  "name": "civicrm/civicrm-asset-plugin",
+  "description": "Publish assets from private CiviCRM folders to a public folder",
+  "type": "composer-plugin",
+  "license": "BSD-2-Clause",
+  "require": {
+    "composer-plugin-api": "^1.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Civi\\AssetPlugin\\": "src/"
+    }
+  },
+  "extra": {
+    "class": "Civi\\AssetPlugin\\AssetPlugin"
+  }
+}
