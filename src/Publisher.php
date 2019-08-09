@@ -22,9 +22,15 @@ class Publisher {
    */
   protected $io;
 
+  /**
+   * @var array
+   */
+  protected $config;
+
   public function __construct(\Composer\Composer $composer, \Composer\IO\IOInterface $io) {
     $this->composer = $composer;
     $this->io = $io;
+    $this->config = $this->createConfig();
   }
 
   public function publishAssets(PackageInterface $package) {
@@ -35,7 +41,7 @@ class Publisher {
   }
 
   public function publishAllAssets() {
-    $this->io->write("\n<info>TODO: syncAllAssets</info>");
+    $this->io->write("\n<info>Publishing CiviCRM assets (<comment>{$this->getLocalPath()}</comment>)</info>");
     foreach ($this->createAllAssetRules() as $assetRule) {
       $assetRule->publish($this, $this->io);
     }
@@ -49,7 +55,7 @@ class Publisher {
     $vendorPath = $this->composer->getConfig()->get('vendor-dir');
     $file = $vendorPath . "/composer/autoload_civicrm_asset.php";
 
-    $this->io->write("\n<info>Generating CiviCRM asset paths (<comment>$file</comment>)</info>");
+    $this->io->write("<info>Generating CiviCRM asset paths</info>");
     $snippets = ["<?php\n"];
     $snippets[] = "global \$civicrm_paths;\n";
     $snippets[] = "\$vendorDir = dirname(dirname(__FILE__));\n";
@@ -85,13 +91,11 @@ class Publisher {
    * @return string
    */
   public function getLocalPath() {
-    // FIXME, use 'composer.json' extras and rtrim()
-    return 'web/libraries/civicrm';
+    return rtrim($this->config['path'], DIRECTORY_SEPARATOR);
   }
 
   public function getWebPath() {
-    // FIXME, use 'composer.json' extras and rtrim()
-    return 'libraries/civicrm';
+    return rtrim($this->config['url'], '/');
   }
 
   /**
@@ -131,6 +135,17 @@ class Publisher {
       }
     }
     return $rules;
+  }
+
+  protected function createConfig() {
+    $defaults = [
+      'path' => 'web/libraries',
+      'url' => '/libraries',
+    ];
+    $extra = $this->composer->getPackage()->getExtra();
+    $config = isset($extra['civicrm-asset']) ? $extra['civicrm-asset'] : [];
+    $config = array_merge($defaults, $config);
+    return $config;
   }
 
 }

@@ -40,7 +40,7 @@ class CustomPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
       'minimum-stability' => 'dev',
       'extras' => [
         'civicrm-asset' => [
-          'local' => 'htdocs/my-assets',
+          'path' => 'htdocs/my-assets',
           'url' => '/wonky-assets',
         ],
       ],
@@ -57,7 +57,8 @@ class CustomPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
     $this->assertFileExists('vendor/civicrm/civicrm-core/css/civicrm.css');
     // FIXME $this->assertFileExists('htdocs/my-assets/civicrm-core/css/civicrm.css');
     // FIXME $this->assertEquals(...content...);
-    $this->markTestIncomplete('Not implemented');  }
+    $this->markTestIncomplete('Not implemented');
+  }
 
   public function testApi4Assets() {
     $this->assertFileExists('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png');
@@ -76,13 +77,18 @@ class CustomPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
     $paths = json_decode($proc->getOutput(), 1);
 
     $expectPaths = [];
-    $expectPaths['civicrm.root']['path'] = self::getTestDir() . '/htdocs/my-assets/civicrm/civicrm-core';
-    $expectPaths['civicrm.packages']['path'] = self::getTestDir() . '/wonky-assets/civicrm/civicrm-packages';
+    $expectPaths['civicrm.root']['path'] = self::getTestDir() . '/htdocs/my-assets/civiZcrm/civicrm-core';
+    $expectPaths['civicrm.packages']['path'] = self::getTestDir() . '/htdocs/my-assets/civicrm/civicrm-packages';
     // FIXME url checks
 
     $count = 0;
     foreach ($expectPaths as $pathVar => $variants) {
       foreach ($variants as $variant => $expectPathValue) {
+        $realExpectPathValue = realpath($expectPathValue);
+        $realActualPathValue = realpath($paths[$pathVar][$variant]);
+        $this->assertNotEmpty($realExpectPathValue);
+        $this->assertTrue(file_exists($expectPathValue));
+        $this->assertTrue(file_exists($realActualPathValue));
         $this->assertEquals(realpath($expectPathValue), realpath($paths[$pathVar][$variant]),
           "Expect paths[$pathVar][$variant] to match");
         $count++;

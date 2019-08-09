@@ -78,6 +78,11 @@ class DefaultPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
     $count = 0;
     foreach ($expectPaths as $pathVar => $variants) {
       foreach ($variants as $variant => $expectPathValue) {
+        $realExpectPathValue = realpath($expectPathValue);
+        $realActualPathValue = realpath($paths[$pathVar][$variant]);
+        $this->assertNotEmpty($realExpectPathValue);
+        $this->assertTrue(file_exists($expectPathValue));
+        $this->assertTrue(file_exists($realActualPathValue));
         $this->assertEquals(realpath($expectPathValue), realpath($paths[$pathVar][$variant]),
           "Expect paths[$pathVar][$variant] to match");
         $count++;
