@@ -11,20 +11,32 @@ class BasicAssetRule implements AssetRuleInterface {
    */
   protected $package;
 
+  protected $pathVar;
+
   /**
    * BasicPublisher constructor.
    * @param \Composer\Package\PackageInterface $package
    */
-  public function __construct(\Composer\Package\PackageInterface $package) {
+  public function __construct(\Composer\Package\PackageInterface $package, $pathVar) {
     $this->package = $package;
+    $this->pathVar = $pathVar;
   }
 
   public function createAutoloadSnippet(Publisher $publisher, IOInterface $io) {
-    return '/* FIXME BasicAssetRule::createAutoloadSnippet */';
+    return sprintf("\$civicrm_paths[%s][%s] = \$baseDir . %s;\n",
+        var_export($this->pathVar, 1),
+        var_export('path', 1),
+        var_export('/' . $publisher->createLocalPath($this->package), 1))
+      .
+      sprintf("\$civicrm_paths[%s][%s] = %s;\n",
+        var_export($this->pathVar, 1),
+        var_export('url', 1),
+        var_export('/' . $publisher->createWebPath($this->package), 1));
   }
 
   public function publish(Publisher $publisher, IOInterface $io) {
-    $io->write("TODO: BasicAssetRule::publish for " . $this->getPackage()->getName());
+    $io->write("TODO: BasicAssetRule::publish for " . $this->getPackage()
+      ->getName());
   }
 
   /**

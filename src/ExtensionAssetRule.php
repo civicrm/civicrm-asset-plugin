@@ -28,7 +28,7 @@ class ExtensionAssetRule implements AssetRuleInterface {
   }
 
   public function createAutoloadSnippet(Publisher $publisher, IOInterface $io) {
-    return '/* FIXME ExtensionAssetRule::createAutoloadSnippet */';
+    return "/* FIXME ExtensionAssetRule::createAutoloadSnippet */\n";
   }
 
   public function publish(Publisher $publisher, IOInterface $io) {

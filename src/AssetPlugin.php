@@ -45,13 +45,11 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
     return [
       PackageEvents::POST_PACKAGE_INSTALL => 'onPackageInstall',
       PackageEvents::POST_PACKAGE_UPDATE => 'onPackageUpdate',
-      ScriptEvents::POST_AUTOLOAD_DUMP => 'onAutoloadDump',
+      ScriptEvents::PRE_AUTOLOAD_DUMP => 'onAutoloadDump',
     ];
   }
 
   /**
-   * Event callback for either the install or update package events.
-   *
    * @param \Composer\Installer\PackageEvent $event
    *   The event.
    */
@@ -61,8 +59,6 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
   }
 
   /**
-   * Event callback for either the install or update package events.
-   *
    * @param \Composer\Installer\PackageEvent $event
    *   The event.
    */
@@ -71,8 +67,16 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
     $this->publisher->publishAssets($package);
   }
 
+  /**
+   * @param \Composer\Script\Event $event
+   */
   public function onAutoloadDump(Event $event) {
-    $this->io->write("TODO: Update autoload");
+    $file = $this->publisher->generateAutoload();
+
+    $rootPackage = $event->getComposer()->getPackage();
+    $autoloads = $rootPackage->getAutoload();
+    $autoloads['files'][] = $file;
+    $rootPackage->setAutoload($autoloads);
   }
 
   /**

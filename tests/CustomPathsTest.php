@@ -53,15 +53,42 @@ class CustomPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
     PH::runOk('composer install');
   }
 
-  public function testHasCivicrmCss() {
+  public function testCivicrmCss() {
     $this->assertFileExists('vendor/civicrm/civicrm-core/css/civicrm.css');
-    // $this->assertFileExists('web/libraries/civicrm/civicrm-core/css/civicrm.css');
-    // $this->assertEquals();
+    // FIXME $this->assertFileExists('htdocs/my-assets/civicrm-core/css/civicrm.css');
+    // FIXME $this->assertEquals(...content...);
+    $this->markTestIncomplete('Not implemented');  }
+
+  public function testApi4Assets() {
+    $this->assertFileExists('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png');
+    // FIXME $this->assertFileExists('htdocs/my-assets/civipkg/org.civicrm.api4/images/ApiExplorer.png');
+    // FIXME $this->assertEquals(...content...);
+    $this->markTestIncomplete('Not implemented');
   }
 
   public function testPackagesPhp() {
     $this->assertFileExists('vendor/civicrm/civicrm-packages/HTML/QuickForm.php');
     $this->assertFileNotExists('web/libraries/civicrm-packages/HTML/QuickForm.php');
+  }
+
+  public function testAutoloadCivicrmPaths() {
+    $proc = PH::runOk(['php -r @CODE', 'CODE' => 'require_once "vendor/autoload.php"; echo json_encode($GLOBALS["civicrm_paths"], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);']);
+    $paths = json_decode($proc->getOutput(), 1);
+
+    $expectPaths = [];
+    $expectPaths['civicrm.root']['path'] = self::getTestDir() . '/htdocs/my-assets/civicrm/civicrm-core';
+    $expectPaths['civicrm.packages']['path'] = self::getTestDir() . '/wonky-assets/civicrm/civicrm-packages';
+    // FIXME url checks
+
+    $count = 0;
+    foreach ($expectPaths as $pathVar => $variants) {
+      foreach ($variants as $variant => $expectPathValue) {
+        $this->assertEquals(realpath($expectPathValue), realpath($paths[$pathVar][$variant]),
+          "Expect paths[$pathVar][$variant] to match");
+        $count++;
+      }
+    }
+    $this->assertEquals(count($expectPaths), $count);
   }
 
 }

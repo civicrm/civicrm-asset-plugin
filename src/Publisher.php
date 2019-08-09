@@ -12,6 +12,16 @@ use Composer\Package\PackageInterface;
  */
 class Publisher {
 
+  /**
+   * @var \Composer\Composer
+   */
+  protected $composer;
+
+  /**
+   * @var \Composer\IO\IOInterface
+   */
+  protected $io;
+
   public function __construct(\Composer\Composer $composer, \Composer\IO\IOInterface $io) {
     $this->composer = $composer;
     $this->io = $io;
@@ -25,10 +35,32 @@ class Publisher {
   }
 
   public function publishAllAssets() {
-    $this->io->write("TODO: syncAllAssets");
+    $this->io->write("\n<info>TODO: syncAllAssets</info>");
     foreach ($this->createAllAssetRules() as $assetRule) {
       $assetRule->publish($this, $this->io);
     }
+  }
+
+  /**
+   * @return string
+   *   Full path to the asset map.
+   */
+  public function generateAutoload() {
+    $vendorPath = $this->composer->getConfig()->get('vendor-dir');
+    $file = $vendorPath . "/composer/autoload_civicrm_asset.php";
+
+    $this->io->write("\n<info>Generating CiviCRM asset paths (<comment>$file</comment>)</info>");
+    $snippets = ["<?php\n"];
+    $snippets[] = "global \$civicrm_paths;\n";
+    $snippets[] = "\$vendorDir = dirname(dirname(__FILE__));\n";
+    $snippets[] = "\$baseDir = dirname(\$vendorDir);\n";
+    $snippets[] = "\$civicrm_paths['civicrm.vendor']['path'] = \$vendorDir;\n";
+    foreach ($this->createAllAssetRules() as $assetRule) {
+      $snippets[] = $assetRule->createAutoloadSnippet($this, $this->io);
+    }
+
+    file_put_contents($file, implode("", $snippets));
+    return $file;
   }
 
   /**
@@ -40,18 +72,26 @@ class Publisher {
   }
 
   /**
+   * @param \Composer\Package\PackageInterface $package
+   * @return string
+   */
+  public function createWebPath(PackageInterface $package) {
+    return $this->getWebPath() . '/' . $package->getName();
+  }
+
+  /**
    * Get the publicly-accessible path to which we should write assets.
    *
    * @return string
    */
   public function getLocalPath() {
     // FIXME, use 'composer.json' extras and rtrim()
-    return './web/libraries/civicrm';
+    return 'web/libraries/civicrm';
   }
 
   public function getWebPath() {
     // FIXME, use 'composer.json' extras and rtrim()
-    return '/libraries/civicrm';
+    return 'libraries/civicrm';
   }
 
   /**
@@ -64,13 +104,15 @@ class Publisher {
   protected function createAssetRule(PackageInterface $package) {
     switch ($package->getName()) {
       case 'civicrm/civicrm-core':
+        return new BasicAssetRule($package, 'civicrm.root');
+
       case 'civicrm/civicrm-packages':
-        return new BasicAssetRule($package);
+        return new BasicAssetRule($package, 'civicrm.packages');
     }
 
-    $targetDir = $package->getTargetDir();
-    if ($targetDir && file_exists("$targetDir/info.xml")) {
-      return new ExtensionAssetRule($package, "$targetDir/info.xml");
+    $installPath = $this->composer->getInstallationManager()->getInstallPath($package);
+    if ($installPath && file_exists("$installPath/info.xml")) {
+      return new ExtensionAssetRule($package, "$installPath/info.xml");
     }
 
     return NULL;
@@ -80,12 +122,15 @@ class Publisher {
    * @return AssetRuleInterface[]
    */
   protected function createAllAssetRules() {
-    $this->io->write("TODO: findAllAssetRules");
-    //    $localRepo = $this->composer->getRepositoryManager()->getLocalRepository();
-    //    foreach ($localRepo->getCanonicalPackages() as $package) {
-    //      /** @var PackageInterface $package */
-    //    }
-    return [];
+    $localRepo = $this->composer->getRepositoryManager()->getLocalRepository();
+    $rules = [];
+    foreach ($localRepo->getCanonicalPackages() as $package) {
+      /** @var \Composer\Package\PackageInterface $package */
+      if ($rule = $this->createAssetRule($package)) {
+        $rules[] = $rule;
+      }
+    }
+    return $rules;
   }
 
 }
