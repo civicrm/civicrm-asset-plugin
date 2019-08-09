@@ -1,5 +1,17 @@
 # civicrm-asset-plugin
 
+The `civicrm-asset-plugin` is a [composer](https://getcomposer.org/) plugin
+to support project structures, such as the common Drupal 8 templates, in
+which PHP-code (`*.php`) and web-assets (`*.js`, `*.css`, etc) are split
+apart.  It's job is it identify web-assets related to CiviCRM and copy them
+to another folder.
+
+It supports assets from:
+
+* `civicrm-core`
+* `civicrm-packages`
+* Any extension containing an `info.xml` file
+
 ## Testing
 
 The `tests/` folder includes integration tests written with PHPUnit.  Each
