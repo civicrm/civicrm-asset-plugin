@@ -40,8 +40,8 @@ class CustomPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
       'minimum-stability' => 'dev',
       'extras' => [
         'civicrm-asset' => [
-          'path' => 'htdocs/my-assets',
-          'url' => '/wonky-assets',
+          'path' => 'htdocs/foo-civi-assets',
+          'url' => '/bar-civi-assets',
         ],
       ],
     ];
@@ -55,30 +55,33 @@ class CustomPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
 
   public function testCivicrmCss() {
     $this->assertFileExists('vendor/civicrm/civicrm-core/css/civicrm.css');
-    // FIXME $this->assertFileExists('htdocs/my-assets/civicrm-core/css/civicrm.css');
+    // FIXME $this->assertFileExists('htdocs/foo-civi-assets/core/css/civicrm.css');
     // FIXME $this->assertEquals(...content...);
     $this->markTestIncomplete('Not implemented');
   }
 
   public function testApi4Assets() {
     $this->assertFileExists('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png');
-    // FIXME $this->assertFileExists('htdocs/my-assets/civipkg/org.civicrm.api4/images/ApiExplorer.png');
+    // FIXME $this->assertFileExists('htdocs/foo-civi-assets/org.civicrm.api4/images/ApiExplorer.png');
     // FIXME $this->assertEquals(...content...);
     $this->markTestIncomplete('Not implemented');
   }
 
   public function testPackagesPhp() {
     $this->assertFileExists('vendor/civicrm/civicrm-packages/HTML/QuickForm.php');
-    $this->assertFileNotExists('web/libraries/civicrm-packages/HTML/QuickForm.php');
+    $this->assertFileNotExists('htdocs/foo-civi-assets/packages/HTML/QuickForm.php');
   }
 
   public function testAutoloadCivicrmPaths() {
-    $proc = PH::runOk(['php -r @CODE', 'CODE' => 'require_once "vendor/autoload.php"; echo json_encode($GLOBALS["civicrm_paths"], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);']);
+    $proc = PH::runOk([
+      'php -r @CODE',
+      'CODE' => 'require_once "vendor/autoload.php"; echo json_encode($GLOBALS["civicrm_paths"], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);',
+    ]);
     $paths = json_decode($proc->getOutput(), 1);
 
     $expectPaths = [];
-    $expectPaths['civicrm.root']['path'] = self::getTestDir() . '/htdocs/my-assets/civiZcrm/civicrm-core';
-    $expectPaths['civicrm.packages']['path'] = self::getTestDir() . '/htdocs/my-assets/civicrm/civicrm-packages';
+    $expectPaths['civicrm.root']['path'] = self::getTestDir() . '/htdocs/foo-civi-assets/core';
+    $expectPaths['civicrm.packages']['path'] = self::getTestDir() . '/htdocs/foo-civi-assets/packages';
     // FIXME url checks
 
     $count = 0;

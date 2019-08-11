@@ -49,7 +49,7 @@ class DefaultPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
 
   public function testCivicrmCss() {
     $this->assertFileExists('vendor/civicrm/civicrm-core/css/civicrm.css');
-    // FIXME $this->assertFileExists('web/libraries/civicrm-core/css/civicrm.css');
+    // FIXME $this->assertFileExists('web/libraries/civicrm/core/css/civicrm.css');
     // FIXME $this->assertEquals(...content...);
     $this->markTestIncomplete('Not implemented');
   }
@@ -63,7 +63,7 @@ class DefaultPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
 
   public function testPackagesPhp() {
     $this->assertFileExists('vendor/civicrm/civicrm-packages/HTML/QuickForm.php');
-    $this->assertFileNotExists('web/libraries/civicrm-packages/HTML/QuickForm.php');
+    $this->assertFileNotExists('web/libraries/civicrm/packages/HTML/QuickForm.php');
   }
 
   public function testAutoloadCivicrmPaths() {
@@ -71,8 +71,8 @@ class DefaultPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
     $paths = json_decode($proc->getOutput(), 1);
 
     $expectPaths = [];
-    $expectPaths['civicrm.root']['path'] = self::getTestDir() . '/web/libraries/civicrm/civicrm-core';
-    $expectPaths['civicrm.packages']['path'] = self::getTestDir() . '/web/libraries/civicrm/civicrm-packages';
+    $expectPaths['civicrm.root']['path'] = self::getTestDir() . '/web/libraries/civicrm/core';
+    $expectPaths['civicrm.packages']['path'] = self::getTestDir() . '/web/libraries/civicrm/packages';
     // FIXME url checks
 
     $count = 0;

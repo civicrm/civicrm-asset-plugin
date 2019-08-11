@@ -106,14 +106,19 @@ class Publisher {
 
     switch ($package->getName()) {
       case 'civicrm/civicrm-core':
-        return new BasicAssetRule($package, $installPath, 'civicrm/civicrm-core', 'civicrm.root');
+        return new BasicAssetRule($package, $installPath, 'core', 'civicrm.root');
 
       case 'civicrm/civicrm-packages':
-        return new BasicAssetRule($package, $installPath, 'civicrm/civicrm-packages', 'civicrm.packages');
+        return new BasicAssetRule($package, $installPath, 'packages', 'civicrm.packages');
     }
 
     if ($installPath && file_exists("$installPath/info.xml")) {
-      return new ExtensionAssetRule($package, $installPath);
+      try {
+        return new ExtensionAssetRule($package, $installPath);
+      }
+      catch (XmlException $e) {
+        $this->io->writeError("Skipping invalid extension: $installPath.");
+      }
     }
 
     return NULL;
@@ -136,8 +141,8 @@ class Publisher {
 
   protected function createConfig() {
     $defaults = [
-      'path' => 'web/libraries',
-      'url' => '/libraries',
+      'path' => 'web/libraries/civicrm',
+      'url' => '/libraries/civicrm',
       'symlink' => FALSE,
       'default_pattern' => [
         '**/*.html',

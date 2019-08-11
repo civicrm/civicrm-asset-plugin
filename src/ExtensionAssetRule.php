@@ -13,7 +13,15 @@ class ExtensionAssetRule extends AbstractAssetRule {
   protected $extKey;
 
   public function __construct(\Composer\Package\PackageInterface $package, $srcPath) {
-    parent::__construct($package, $srcPath, $package->getName());
+    $infoXml = Xml::parseFile("$srcPath/info.xml");
+    $extKey = $infoXml->attributes()->key;
+    if (empty($extKey)) {
+      throw new XmlException("Failed to parse info.xml");
+    }
+    if (in_array($extKey, self::RESERVED_NAMES)) {
+      throw new XmlException("Cannot use info.xml - extension key is a reserved name");
+    }
+    parent::__construct($package, $srcPath, $extKey);
   }
 
   public function createAssetMap(Publisher $publisher, IOInterface $io) {
