@@ -2,6 +2,7 @@
 
 namespace Civi\AssetPlugin;
 
+use Civi\AssetPlugin\Exception\XmlException;
 use Composer\Package\PackageInterface;
 
 /**
@@ -76,26 +77,6 @@ class Publisher {
   }
 
   /**
-   * @param \Composer\Package\PackageInterface $package
-   * @return string
-   *   The local path at which assets should be published, expressed
-   *   relative to the project root.
-   */
-  public function createLocalPath(PackageInterface $package) {
-    return $this->getLocalPath() . DIRECTORY_SEPARATOR . $package->getName();
-  }
-
-  /**
-   * @param \Composer\Package\PackageInterface $package
-   * @return string
-   *   The web path at which assets can be consumed, expressed relative
-   *   to the web root.
-   */
-  public function createWebPath(PackageInterface $package) {
-    return $this->getWebPath() . '/' . $package->getName();
-  }
-
-  /**
    * Get the local file-path to which we should write assets.
    *
    * @return string
@@ -105,6 +86,8 @@ class Publisher {
   }
 
   /**
+   * Get the public URL path at which assets may be read.
+   *
    * @return string
    */
   public function getWebPath() {
@@ -123,10 +106,10 @@ class Publisher {
 
     switch ($package->getName()) {
       case 'civicrm/civicrm-core':
-        return new BasicAssetRule($package, $installPath, 'civicrm.root');
+        return new BasicAssetRule($package, $installPath, 'civicrm/civicrm-core', 'civicrm.root');
 
       case 'civicrm/civicrm-packages':
-        return new BasicAssetRule($package, $installPath, 'civicrm.packages');
+        return new BasicAssetRule($package, $installPath, 'civicrm/civicrm-packages', 'civicrm.packages');
     }
 
     if ($installPath && file_exists("$installPath/info.xml")) {

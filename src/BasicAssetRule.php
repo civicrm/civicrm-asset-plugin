@@ -8,8 +8,8 @@ class BasicAssetRule extends AbstractAssetRule {
 
   protected $pathVar;
 
-  public function __construct(\Composer\Package\PackageInterface $package, $srcPath, $pathVar) {
-    parent::__construct($package, $srcPath);
+  public function __construct(\Composer\Package\PackageInterface $package, $srcPath, $publicName, $pathVar) {
+    parent::__construct($package, $srcPath, $publicName);
     $this->pathVar = $pathVar;
   }
 
@@ -23,24 +23,18 @@ class BasicAssetRule extends AbstractAssetRule {
     return sprintf("\$civicrm_paths[%s][%s] = \$baseDir . %s;\n",
         var_export($this->pathVar, 1),
         var_export('path', 1),
-        var_export('/' . $publisher->createLocalPath($this->package), 1))
+        var_export('/' . $this->getLocalPath($publisher), 1))
       .
       sprintf("\$civicrm_paths[%s][%s] = %s;\n",
         var_export($this->pathVar, 1),
         var_export('url', 1),
-        var_export('/' . $publisher->createWebPath($this->package), 1));
+        var_export('/' . $this->getWebPath($publisher), 1));
   }
 
   public function publish(Publisher $publisher, IOInterface $io) {
-    $io->write("TODO: BasicAssetRule::publish for " . $this->getPackage()
-      ->getName());
-  }
-
-  /**
-   * @return \Composer\Package\PackageInterface
-   */
-  public function getPackage() {
-    return $this->package;
+    $localPath = $this->getLocalPath($publisher);
+    $webPath = $this->getWebPath($publisher);
+    $io->write("TODO: BasicAssetRule::publish ($webPath <=> $localPath)");
   }
 
 }
