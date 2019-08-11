@@ -49,7 +49,7 @@ class AssetPluginTestCase extends \PHPUnit\Framework\TestCase {
       self::$origDir = NULL;
 
       if (getenv('KEEP_TEST_PROJECT')) {
-        fwrite(STDERR, sprintf("\n\nTest project created: %s\n", self::$testDir));
+        fwrite(STDERR, sprintf("\n\nTest project created (%s): %s\n", __CLASS__, self::$testDir));
       }
       else {
         self::cleanDir(self::$testDir);
