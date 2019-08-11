@@ -17,7 +17,7 @@ interface AssetRuleInterface {
    * @param \Composer\IO\IOInterface $io
    * @return string
    */
-  public function createAutoloadSnippet(Publisher $publisher, IOInterface $io);
+  public function createAssetMap(Publisher $publisher, IOInterface $io);
 
   /**
    * @param \Civi\AssetPlugin\Publisher $publisher

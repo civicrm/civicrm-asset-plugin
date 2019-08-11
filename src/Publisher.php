@@ -40,6 +40,10 @@ class Publisher {
     }
   }
 
+  /**
+   * Find all Civi-related packages; extract and publish all relevant
+   * assets.
+   */
   public function publishAllAssets() {
     $this->io->write("\n<info>Publishing CiviCRM assets (<comment>{$this->getLocalPath()}</comment>)</info>");
     foreach ($this->createAllAssetRules() as $assetRule) {
@@ -48,10 +52,12 @@ class Publisher {
   }
 
   /**
+   * Create a file with path/url mappings for Civi-related assets.
+   *
    * @return string
    *   Full path to the asset map.
    */
-  public function generateAutoload() {
+  public function createAssetMap() {
     $vendorPath = $this->composer->getConfig()->get('vendor-dir');
     $file = $vendorPath . "/composer/autoload_civicrm_asset.php";
 
@@ -62,7 +68,7 @@ class Publisher {
     $snippets[] = "\$baseDir = dirname(\$vendorDir);\n";
     $snippets[] = "\$civicrm_paths['civicrm.vendor']['path'] = \$vendorDir;\n";
     foreach ($this->createAllAssetRules() as $assetRule) {
-      $snippets[] = $assetRule->createAutoloadSnippet($this, $this->io);
+      $snippets[] = $assetRule->createAssetMap($this, $this->io);
     }
 
     file_put_contents($file, implode("", $snippets));
@@ -72,6 +78,8 @@ class Publisher {
   /**
    * @param \Composer\Package\PackageInterface $package
    * @return string
+   *   The local path at which assets should be published, expressed
+   *   relative to the project root.
    */
   public function createLocalPath(PackageInterface $package) {
     return $this->getLocalPath() . DIRECTORY_SEPARATOR . $package->getName();
@@ -80,13 +88,15 @@ class Publisher {
   /**
    * @param \Composer\Package\PackageInterface $package
    * @return string
+   *   The web path at which assets can be consumed, expressed relative
+   *   to the web root.
    */
   public function createWebPath(PackageInterface $package) {
     return $this->getWebPath() . '/' . $package->getName();
   }
 
   /**
-   * Get the publicly-accessible path to which we should write assets.
+   * Get the local file-path to which we should write assets.
    *
    * @return string
    */
@@ -94,6 +104,9 @@ class Publisher {
     return rtrim($this->config['path'], DIRECTORY_SEPARATOR);
   }
 
+  /**
+   * @return string
+   */
   public function getWebPath() {
     return rtrim($this->config['url'], '/');
   }
@@ -106,17 +119,18 @@ class Publisher {
    *   NULL if the package is not related to CiviCRM.
    */
   protected function createAssetRule(PackageInterface $package) {
+    $installPath = $this->composer->getInstallationManager()->getInstallPath($package);
+
     switch ($package->getName()) {
       case 'civicrm/civicrm-core':
-        return new BasicAssetRule($package, 'civicrm.root');
+        return new BasicAssetRule($package, $installPath, 'civicrm.root');
 
       case 'civicrm/civicrm-packages':
-        return new BasicAssetRule($package, 'civicrm.packages');
+        return new BasicAssetRule($package, $installPath, 'civicrm.packages');
     }
 
-    $installPath = $this->composer->getInstallationManager()->getInstallPath($package);
     if ($installPath && file_exists("$installPath/info.xml")) {
-      return new ExtensionAssetRule($package, "$installPath/info.xml");
+      return new ExtensionAssetRule($package, $installPath);
     }
 
     return NULL;

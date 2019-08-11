@@ -4,35 +4,15 @@ namespace Civi\AssetPlugin;
 
 use Composer\IO\IOInterface;
 
-class ExtensionAssetRule implements AssetRuleInterface {
+class ExtensionAssetRule extends AbstractAssetRule {
 
-  /**
-   * @var \Composer\Package\PackageInterface
-   */
-  protected $package;
-
-  /**
-   * @var string
-   */
-  protected $infoXmlPath;
-
-  /**
-   * ExtensionAssetRule constructor.
-   *
-   * @param \Composer\Package\PackageInterface $package
-   * @param string $infoXmlPath
-   */
-  public function __construct(\Composer\Package\PackageInterface $package, $infoXmlPath) {
-    $this->package = $package;
-    $this->infoXmlPath = $infoXmlPath;
-  }
-
-  public function createAutoloadSnippet(Publisher $publisher, IOInterface $io) {
+  public function createAssetMap(Publisher $publisher, IOInterface $io) {
     return "/* FIXME ExtensionAssetRule::createAutoloadSnippet */\n";
   }
 
   public function publish(Publisher $publisher, IOInterface $io) {
-    $io->write("TODO: ExtensionAssetRule::publish for " . $this->getPackage()->getName());
+    $io->write("TODO: ExtensionAssetRule::publish for " . $this->getPackage()
+      ->getName());
   }
 
   /**

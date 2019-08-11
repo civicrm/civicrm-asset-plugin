@@ -71,7 +71,7 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
    * @param \Composer\Script\Event $event
    */
   public function onAutoloadDump(Event $event) {
-    $file = $this->publisher->generateAutoload();
+    $file = $this->publisher->createAssetMap();
 
     $rootPackage = $event->getComposer()->getPackage();
     $autoloads = $rootPackage->getAutoload();
