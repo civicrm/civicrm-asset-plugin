@@ -141,6 +141,23 @@ class Publisher {
     $defaults = [
       'path' => 'web/libraries',
       'url' => '/libraries',
+      'symlink' => FALSE,
+      'default_pattern' => [
+        '**/*.html',
+        '**/*.js',
+        '**/*.css',
+        '**/*.svg',
+        '**/*.png',
+        '**/*.jpg',
+        '**/*.jpeg',
+        '**/*.ico',
+        '**/*.gif',
+        '**/*.woff',
+        '**/*.woff2',
+        '**/*.ttf',
+        '**/*.eot',
+        '**/*.swf',
+      ],
     ];
     $extra = $this->composer->getPackage()->getExtra();
     $config = isset($extra['civicrm-asset']) ? $extra['civicrm-asset'] : [];
