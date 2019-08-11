@@ -62,7 +62,7 @@ class Publisher {
     $vendorPath = $this->composer->getConfig()->get('vendor-dir');
     $file = $vendorPath . "/composer/autoload_civicrm_asset.php";
 
-    $this->io->write("<info>Generating CiviCRM asset paths</info>");
+    $this->io->write("<info>Generating CiviCRM asset map</info>");
     $snippets = ["<?php\n"];
     $snippets[] = "global \$civicrm_paths;\n";
     $snippets[] = "\$vendorDir = dirname(dirname(__FILE__));\n";

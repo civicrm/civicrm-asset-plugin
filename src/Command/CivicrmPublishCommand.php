@@ -20,6 +20,7 @@ class CivicrmPublishCommand extends \Composer\Command\BaseCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $p = new Publisher($this->getComposer(), $this->getIO());
     $p->publishAllAssets();
+    $p->createAssetMap();
   }
 
 }
