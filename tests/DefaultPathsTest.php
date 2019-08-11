@@ -48,15 +48,23 @@ class DefaultPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
   }
 
   public function testCivicrmCss() {
+    // Source file:
     $this->assertFileExists('vendor/civicrm/civicrm-core/css/civicrm.css');
+
+    // Target file:
     // FIXME $this->assertFileExists('web/libraries/civicrm/core/css/civicrm.css');
+
     // FIXME $this->assertEquals(...content...);
     $this->markTestIncomplete('Not implemented');
   }
 
   public function testApi4Assets() {
+    // Source file:
     $this->assertFileExists('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png');
+
+    // Target file:
     // FIXME $this->assertFileExists('web/libraries/civipkg/org.civicrm.api4/images/ApiExplorer.png');
+
     // FIXME $this->assertEquals(...content...);
     $this->markTestIncomplete('Not implemented');
   }

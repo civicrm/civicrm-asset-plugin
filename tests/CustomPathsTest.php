@@ -54,15 +54,23 @@ class CustomPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
   }
 
   public function testCivicrmCss() {
+    // Source file:
     $this->assertFileExists('vendor/civicrm/civicrm-core/css/civicrm.css');
+
+    // Target file:
     // FIXME $this->assertFileExists('htdocs/foo-civi-assets/core/css/civicrm.css');
+
     // FIXME $this->assertEquals(...content...);
     $this->markTestIncomplete('Not implemented');
   }
 
   public function testApi4Assets() {
+    // Source file:
     $this->assertFileExists('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png');
+
+    // Target file:
     // FIXME $this->assertFileExists('htdocs/foo-civi-assets/org.civicrm.api4/images/ApiExplorer.png');
+
     // FIXME $this->assertEquals(...content...);
     $this->markTestIncomplete('Not implemented');
   }
@@ -74,7 +82,7 @@ class CustomPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
 
   public function testAutoloadCivicrmPaths() {
     $proc = PH::runOk([
-      'php -r @CODE',
+      0 => 'php -r @CODE',
       'CODE' => 'require_once "vendor/autoload.php"; echo json_encode($GLOBALS["civicrm_paths"], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);',
     ]);
     $paths = json_decode($proc->getOutput(), 1);
