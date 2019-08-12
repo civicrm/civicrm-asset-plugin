@@ -31,10 +31,4 @@ class BasicAssetRule extends AbstractAssetRule {
         var_export('/' . $this->getWebPath($publisher), 1));
   }
 
-  public function publish(Publisher $publisher, IOInterface $io) {
-    $localPath = $this->getLocalPath($publisher);
-    $webPath = $this->getWebPath($publisher);
-    $io->write("TODO: BasicAssetRule::publish ($webPath <=> $localPath)");
-  }
-
 }

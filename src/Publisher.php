@@ -95,6 +95,13 @@ class Publisher {
   }
 
   /**
+   * @return array
+   */
+  public function getConfig() {
+    return $this->config;
+  }
+
+  /**
    * Get a list of rules for publishing assets from a given package.
    *
    * @param \Composer\Package\PackageInterface $package
@@ -144,26 +151,35 @@ class Publisher {
       'path' => 'web/libraries/civicrm',
       'url' => '/libraries/civicrm',
       'symlink' => FALSE,
-      'default_pattern' => [
-        '**/*.html',
-        '**/*.js',
-        '**/*.css',
-        '**/*.svg',
-        '**/*.png',
-        '**/*.jpg',
-        '**/*.jpeg',
-        '**/*.ico',
-        '**/*.gif',
-        '**/*.woff',
-        '**/*.woff2',
-        '**/*.ttf',
-        '**/*.eot',
-        '**/*.swf',
+      'files' => [
+        'DEFAULT' => [
+          '**.html',
+          '**.js',
+          '**.css',
+          '**.svg',
+          '**.png',
+          '**.jpg',
+          '**.jpeg',
+          '**.ico',
+          '**.gif',
+          '**.woff',
+          '**.woff2',
+          '**.ttf',
+          '**.eot',
+          '**.swf',
+        ],
+      ],
+      'exclude-dir' => [
+        '.git',
+        '.svn',
+        '.bzr',
       ],
     ];
+
     $extra = $this->composer->getPackage()->getExtra();
     $config = isset($extra['civicrm-asset']) ? $extra['civicrm-asset'] : [];
     $config = array_merge($defaults, $config);
+    $config['files'] = array_merge($defaults['files'], $config['files']);
     return $config;
   }
 

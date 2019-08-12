@@ -42,6 +42,7 @@ class CustomPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
         'civicrm-asset' => [
           'path' => 'htdocs/foo-civi-assets',
           'url' => '/bar-civi-assets',
+          // FIXME: Maybe custom 'files' listing as well?
         ],
       ],
     ];

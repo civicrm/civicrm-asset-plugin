@@ -2,6 +2,9 @@
 
 namespace Civi\AssetPlugin;
 
+use Civi\AssetPlugin\Util\GlobPlus;
+use Composer\IO\IOInterface;
+
 abstract class AbstractAssetRule implements AssetRuleInterface {
 
   /**
@@ -31,7 +34,21 @@ abstract class AbstractAssetRule implements AssetRuleInterface {
   public function __construct(\Composer\Package\PackageInterface $package, $srcPath, $publicName) {
     $this->package = $package;
     $this->srcPath = $srcPath;
-    $this->publicName = $publicName;
+    $this->publicName = (string) $publicName;
+  }
+
+  public function publish(Publisher $publisher, IOInterface $io) {
+    $localPath = $this->getLocalPath($publisher);
+    // $webPath = $this->getWebPath($publisher);
+    $globPatterns = $this->getGlobPatterns($publisher);
+
+    $io->write("DRY RUN: Map from {$this->srcPath} to {$localPath}");
+    $io->write("         With: " . implode(', ', $globPatterns));
+
+    $files = GlobPlus::find($this->srcPath, $globPatterns, $publisher->getConfig()['exclude-dir']);
+    foreach ($files as $file) {
+      $io->write(" - $file");
+    }
   }
 
   /**
@@ -39,6 +56,11 @@ abstract class AbstractAssetRule implements AssetRuleInterface {
    */
   public function getPackage() {
     return $this->package;
+  }
+
+  public function getGlobPatterns(Publisher $publisher) {
+    $config = $publisher->getConfig();
+    return $config['files'][$this->publicName] ?? $config['files']['DEFAULT'];
   }
 
   /**
