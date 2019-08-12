@@ -18,17 +18,22 @@ class GlobPlus {
    *   - '**.js' (match .js files in any descendent of the base directory)
    *   - 'css/*.css' (match .css files directly in the 'css' subdir)
    *   - 'css/**.css' (match .css files in any descendent of the 'css' subdir)   * @return \Generator
+   * @param string[] $excludeDirs
+   *   List of subdirs to exclude systematically (e.g. `.git`, `.svn`).
    * @return \Generator
    *   A list of matching file names, expressed relative to $baseDir.
    *   Order is not guaranteed.
    */
-  public static function find($baseDir, $pats) {
+  public static function find($baseDir, $pats, $excludeDirs = []) {
+    // FIXME: If $pats doesn't have any '**.foo' items, then we don't need a full scan.
+    // FIXME: If a folder is a VCS folder, then we don't need to scan below it.
+
     if (empty($pats)) {
       // Effectively, return an empty generator.
       return;
     }
 
-    // Array(string $escapedGlob => string $unescapedRegex).
+    // Array(string $escapedGlob => string $regex).
     $globRegexMap = ['\*\*' => ".+", '\*' => '[^/]+'];
 
     // Deterministic ordering; multiple similar calls should yield same regex.
@@ -43,7 +48,15 @@ class GlobPlus {
     $regex = ';^(' . implode('|', $regexes) . ')$;';
     $baseDir = rtrim($baseDir, DIRECTORY_SEPARATOR);
     $baseLen = strlen($baseDir) + 1;
-    $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($baseDir, \RecursiveDirectoryIterator::SKIP_DOTS));
+    $files = new \RecursiveIteratorIterator(
+      new \RecursiveCallbackFilterIterator(
+        new \RecursiveDirectoryIterator($baseDir, \RecursiveDirectoryIterator::SKIP_DOTS|\RecursiveDirectoryIterator::UNIX_PATHS),
+        function ($current, $key, $iterator) use ($excludeDirs) {
+          /** @var \SplFileInfo $current */
+          return !in_array($current->getBasename(), $excludeDirs);
+        }
+      )
+    );
 
     foreach ($files as $fileinfo) {
       /** @var \SplFileInfo $fileinfo */
