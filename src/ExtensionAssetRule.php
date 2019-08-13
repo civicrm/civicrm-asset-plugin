@@ -30,9 +30,9 @@ class ExtensionAssetRule extends AbstractAssetRule {
     return "/* FIXME ExtensionAssetRule::createAssetMap ([cms.root]$webPath <=> $localPath) */\n";
   }
 
-  public function getGlobPatterns(Publisher $publisher) {
+  public function getIncludes(Publisher $publisher) {
     // FIXME: Check info.xml
-    return parent::getGlobPatterns($publisher);
+    return parent::getIncludes($publisher);
   }
 
   //return [

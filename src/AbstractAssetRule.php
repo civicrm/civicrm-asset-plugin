@@ -31,7 +31,7 @@ abstract class AbstractAssetRule implements AssetRuleInterface {
    * @param string $srcPath
    * @param string $publicName
    */
-  public function __construct(\Composer\Package\PackageInterface $package, $srcPath, $publicName) {
+  public function __construct($package, $srcPath, $publicName) {
     $this->package = $package;
     $this->srcPath = $srcPath;
     $this->publicName = (string) $publicName;
@@ -40,12 +40,12 @@ abstract class AbstractAssetRule implements AssetRuleInterface {
   public function publish(Publisher $publisher, IOInterface $io) {
     $localPath = $this->getLocalPath($publisher);
     // $webPath = $this->getWebPath($publisher);
-    $globPatterns = $this->getGlobPatterns($publisher);
+    $globPatterns = $this->getIncludes($publisher);
 
     $io->write("DRY RUN: Map from {$this->srcPath} to {$localPath}");
     $io->write("         With: " . implode(', ', $globPatterns));
 
-    $files = GlobPlus::find($this->srcPath, $globPatterns, $publisher->getConfig()['exclude-dir']);
+    $files = GlobPlus::find($this->srcPath, $globPatterns, $this->getExcludeDirs($publisher));
     foreach ($files as $file) {
       $io->write(" - $file");
     }
@@ -58,9 +58,22 @@ abstract class AbstractAssetRule implements AssetRuleInterface {
     return $this->package;
   }
 
-  public function getGlobPatterns(Publisher $publisher) {
-    $config = $publisher->getConfig();
-    return $config['files'][$this->publicName] ?? $config['files']['DEFAULT'];
+  /**
+   * @param \Civi\AssetPlugin\Publisher $publisher
+   * @return array
+   *   Ex: ['css/*.css', '**.js']
+   */
+  public function getIncludes(Publisher $publisher) {
+    return $publisher->getAssetConfig($this->publicName, 'include');
+  }
+
+  /**
+   * @param \Civi\AssetPlugin\Publisher $publisher
+   * @return array
+   *   Ex: ['.git', '.svn', '/CRM']
+   */
+  public function getExcludeDirs(Publisher $publisher) {
+    return $publisher->getAssetConfig($this->publicName, 'exclude-dir');
   }
 
   /**

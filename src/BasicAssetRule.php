@@ -8,7 +8,14 @@ class BasicAssetRule extends AbstractAssetRule {
 
   protected $pathVar;
 
-  public function __construct(\Composer\Package\PackageInterface $package, $srcPath, $publicName, $pathVar) {
+  /**
+   * BasicAssetRule constructor.
+   * @param \Composer\Package\PackageInterface $package
+   * @param string $srcPath
+   * @param string $publicName
+   * @param string $pathVar
+   */
+  public function __construct($package, $srcPath, $publicName, $pathVar) {
     parent::__construct($package, $srcPath, $publicName);
     $this->pathVar = $pathVar;
   }

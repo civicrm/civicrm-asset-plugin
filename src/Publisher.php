@@ -28,10 +28,57 @@ class Publisher {
    */
   protected $config;
 
-  public function __construct(\Composer\Composer $composer, \Composer\IO\IOInterface $io) {
+  /**
+   * Publisher constructor.
+   * @param \Composer\Composer $composer
+   * @param \Composer\IO\IOInterface $io
+   * @param null $extra
+   */
+  public function __construct($composer, $io, $extra = NULL) {
     $this->composer = $composer;
     $this->io = $io;
-    $this->config = $this->createConfig();
+    $this->config = $this->mergeConfigExtra(
+      $extra ?? $this->composer->getPackage()->getExtra(),
+      self::getDefaultConfig());
+  }
+
+  /**
+   * @return array
+   */
+  public static function getDefaultConfig() {
+    return [
+      'path' => 'web/libraries/civicrm',
+      'url' => '/libraries/civicrm',
+      'symlink' => FALSE,
+      'assets:*' => [
+        'include' => [
+          '**.html',
+          '**.js',
+          '**.css',
+          '**.svg',
+          '**.png',
+          '**.jpg',
+          '**.jpeg',
+          '**.ico',
+          '**.gif',
+          '**.woff',
+          '**.woff2',
+          '**.ttf',
+          '**.eot',
+          '**.swf',
+        ],
+        'exclude-dir' => [
+          // Common VCS folders
+          '.git',
+          '.svn',
+          '.bzr',
+          // Common top-level PHP folders
+          '/CRM',
+          '/Civi',
+          '/tests',
+        ],
+      ],
+    ];
   }
 
   public function publishAssets(PackageInterface $package) {
@@ -102,6 +149,28 @@ class Publisher {
   }
 
   /**
+   * Get the part of the configuration which is specifically targeted at
+   * a specific package.
+   *
+   * @param string $publicName
+   *   Ex: 'core' or 'org.civicrm.api4'
+   * @param string $field
+   *   Ex: 'include' or 'exclude-dir'
+   * @return array
+   *   Ex: ['**.css']
+   */
+  public function getAssetConfig($publicName, $field) {
+    $config = $this->getConfig();
+    $tgt = $config["assets:{$publicName}"] ?? [];
+    $base = $config['assets:*'];
+    $eff = array_merge($base, $tgt);
+    if (isset($eff['+' . $field])) {
+      $eff[$field] = array_unique(array_merge($eff[$field], $eff['+' . $field]));
+    }
+    return $eff[$field];
+  }
+
+  /**
    * Get a list of rules for publishing assets from a given package.
    *
    * @param \Composer\Package\PackageInterface $package
@@ -146,45 +215,35 @@ class Publisher {
     return $rules;
   }
 
-  protected function createConfig() {
-    $defaults = [
-      'path' => 'web/libraries/civicrm',
-      'url' => '/libraries/civicrm',
-      'symlink' => FALSE,
-      'files' => [
-        'DEFAULT' => [
-          '**.html',
-          '**.js',
-          '**.css',
-          '**.svg',
-          '**.png',
-          '**.jpg',
-          '**.jpeg',
-          '**.ico',
-          '**.gif',
-          '**.woff',
-          '**.woff2',
-          '**.ttf',
-          '**.eot',
-          '**.swf',
-        ],
-      ],
-      'exclude-dir' => [
-        // Common VCS folders
-        '.git',
-        '.svn',
-        '.bzr',
-        // Common top-level PHP folders
-        '/CRM',
-        '/Civi',
-        '/tests',
-      ],
-    ];
-
-    $extra = $this->composer->getPackage()->getExtra();
+  /**
+   * @param $extra
+   * @param $defaults
+   * @return array
+   */
+  protected function mergeConfigExtra($extra, $defaults) {
     $config = isset($extra['civicrm-asset']) ? $extra['civicrm-asset'] : [];
-    $config = array_merge($defaults, $config);
-    $config['files'] = array_merge($defaults['files'], $config['files']);
+    foreach (array_merge(array_keys($config), array_keys($defaults)) as $k) {
+      // If only one party sets the key, use that.
+      if (isset($config[$k]) && !isset($defaults[$k])) {
+        continue;
+      }
+      if (!isset($config[$k]) && isset($defaults[$k])) {
+        $config[$k] = $defaults[$k];
+        continue;
+      }
+
+      // else: Both are set. What kind of merge?
+
+      $isMergeKey = substr($k, 0, 7) === 'assets:';
+      if ($isMergeKey) {
+        $config[$k] = array_merge($defaults[$k], $config[$k]);
+        continue;
+      }
+      else {
+        // Both are set, current $config[$k] takes precedence.
+        continue;
+      }
+    }
     return $config;
   }
 
