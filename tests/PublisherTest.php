@@ -4,7 +4,7 @@ class PublisherTest extends \Civi\AssetPlugin\AssetPluginTestCase {
 
   public function testEmptyCfg() {
     $p = new \Civi\AssetPlugin\Publisher(NULL, NULL, []);
-    $defaultConfig = \Civi\AssetPlugin\Publisher::getDefaultConfig();
+    $defaultConfig = \Civi\AssetPlugin\PublisherDefaults::create(NULL, NULL);
     $actualConfig = $p->getConfig();
     $this->assertEquals($defaultConfig, $actualConfig);
   }
@@ -16,7 +16,7 @@ class PublisherTest extends \Civi\AssetPlugin\AssetPluginTestCase {
         'url' => 'bar',
       ],
     ]);
-    $defaultConfig = \Civi\AssetPlugin\Publisher::getDefaultConfig();
+    $defaultConfig = \Civi\AssetPlugin\PublisherDefaults::create(NULL, NULL);
     $actualConfig = $p->getConfig();
     $this->assertEquals($defaultConfig['assets:*'], $actualConfig['assets:*']);
     $this->assertEquals('foo', $actualConfig['path']);
@@ -24,7 +24,7 @@ class PublisherTest extends \Civi\AssetPlugin\AssetPluginTestCase {
   }
 
   public function getPackageOverrideExamples() {
-    $defaultConfig = \Civi\AssetPlugin\Publisher::getDefaultConfig();
+    $defaultConfig = \Civi\AssetPlugin\PublisherDefaults::create(NULL, NULL);
 
     $cases = [];
 

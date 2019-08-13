@@ -35,7 +35,7 @@ class BasicAssetRule extends AbstractAssetRule {
       sprintf("\$civicrm_paths[%s][%s] = %s;\n",
         var_export($this->pathVar, 1),
         var_export('url', 1),
-        var_export('/' . $this->getWebPath($publisher), 1));
+        var_export('FIXME' . $this->getWebPath($publisher), 1));
   }
 
 }

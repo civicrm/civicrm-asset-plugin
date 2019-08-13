@@ -32,11 +32,19 @@ class AssetPluginTestCase extends \PHPUnit\Framework\TestCase {
    */
   public static function initTestProject($composerJson) {
     self::$origDir = getcwd();
-    self::$testDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'assetplg-' . md5(__DIR__ . time() . rand(0, 10000));
+    if (getenv('USE_TEST_PROJECT')) {
+      self::$testDir = getenv('USE_TEST_PROJECT');
+      @unlink(self::$testDir . DIRECTORY_SEPARATOR . 'composer.lock');
+    }
+    else {
+      self::$testDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'assetplg-' . md5(__DIR__ . time() . rand(0, 10000));
+      self::cleanDir(self::$testDir);
+    }
 
-    self::cleanDir(self::$testDir);
-    mkdir(self::$testDir);
-    file_put_contents(self::$testDir . DIRECTORY_SEPARATOR . 'composer.json', json_encode($composerJson, JSON_PRETTY_PRINT));
+    if (!is_dir(self::$testDir)) {
+      mkdir(self::$testDir);
+    }
+    file_put_contents(self::$testDir . DIRECTORY_SEPARATOR . 'composer.json', json_encode($composerJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     chdir(self::$testDir);
     return self::$testDir;
   }

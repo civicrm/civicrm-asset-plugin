@@ -37,48 +37,10 @@ class Publisher {
   public function __construct($composer, $io, $extra = NULL) {
     $this->composer = $composer;
     $this->io = $io;
+
     $this->config = $this->mergeConfigExtra(
       $extra ?? $this->composer->getPackage()->getExtra(),
-      self::getDefaultConfig());
-  }
-
-  /**
-   * @return array
-   */
-  public static function getDefaultConfig() {
-    return [
-      'path' => 'web/libraries/civicrm',
-      'url' => '/libraries/civicrm',
-      'symlink' => FALSE,
-      'assets:*' => [
-        'include' => [
-          '**.html',
-          '**.js',
-          '**.css',
-          '**.svg',
-          '**.png',
-          '**.jpg',
-          '**.jpeg',
-          '**.ico',
-          '**.gif',
-          '**.woff',
-          '**.woff2',
-          '**.ttf',
-          '**.eot',
-          '**.swf',
-        ],
-        'exclude-dir' => [
-          // Common VCS folders
-          '.git',
-          '.svn',
-          '.bzr',
-          // Common top-level PHP folders
-          '/CRM',
-          '/Civi',
-          '/tests',
-        ],
-      ],
-    ];
+      PublisherDefaults::create($composer, $io));
   }
 
   public function publishAssets(PackageInterface $package) {
@@ -109,7 +71,7 @@ class Publisher {
     $vendorPath = $this->composer->getConfig()->get('vendor-dir');
     $file = $vendorPath . "/composer/autoload_civicrm_asset.php";
 
-    $this->io->write("<info>Generating CiviCRM asset map</info>");
+    $this->io->write("<info>  - CiviCRM asset map</info>");
     $snippets = ["<?php\n"];
     $snippets[] = "global \$civicrm_paths;\n";
     $snippets[] = "\$vendorDir = dirname(dirname(__FILE__));\n";
