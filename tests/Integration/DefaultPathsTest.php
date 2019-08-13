@@ -1,9 +1,9 @@
 <?php
-namespace Civi\AssetPlugin;
+namespace Civi\AssetPlugin\Integration;
 
 use ProcessHelper\ProcessHelper as PH;
 
-class DrupalProjectPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
+class DefaultPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase {
 
   public static function getComposerJson() {
     return [
@@ -15,42 +15,29 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
         ],
       ],
       'require' => [
-        'composer/installers' => '^1.2',
-        'cweagans/composer-patches' => '^1.6.5',
-        'drupal-composer/drupal-scaffold' => '^2.5',
-        'drupal/console' => '^1.0.2',
-        'drupal/core' => '^8.7.0',
-        'drush/drush' => '^9.0.0',
-        'vlucas/phpdotenv' => '^2.4',
-        'webflo/drupal-finder' => '^1.0.0',
-        'webmozart/path-util' => '^2.3',
-        'zaporylie/composer-drupal-optimizations' => '^1.0',
-
         'civicrm/civicrm-asset-plugin' => '@dev',
         'civicrm/civicrm-core' => '5.16.x-dev',
         'civicrm/civicrm-packages' => '5.16.x-dev',
+        'civipkg/org.civicrm.api4' => '4.4.3',
       ],
       'repositories' => [
         'src' => [
           'type' => 'path',
           'url' => self::getPluginSourceDir(),
         ],
-        'drupal' => [
-          'type' => 'composer',
-          'url' => 'https://packages.drupal.org/8',
+        'api4' => [
+          'type' => 'package',
+          'package' => [
+            'name' => 'civipkg/org.civicrm.api4',
+            'version' => '4.4.3',
+            'dist' => [
+              'url' => 'https://github.com/civicrm/org.civicrm.api4/archive/4.4.2.zip',
+              'type' => 'zip',
+            ],
+          ],
         ],
       ],
       'minimum-stability' => 'dev',
-      'extra' => [
-        'installer-paths' => [
-          'web/core' => ['type:drupal-core'],
-          'web/libraries/{$name}' => ['type:drupal-library'],
-          'web/modules/contrib/{$name}' => ['type:drupal-module'],
-          'web/profiles/contrib/{$name}' => ['type:drupal-profile'],
-          'web/themes/contrib/{$name}' => ['type:drupal-theme'],
-          'drush/Commands/{$name}' => ['type:drupal-drush'],
-        ],
-      ],
     ];
   }
 
@@ -71,6 +58,17 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
     $this->markTestIncomplete('Not implemented');
   }
 
+  public function testApi4Assets() {
+    // Source file:
+    $this->assertFileExists('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png');
+
+    // Target file:
+    // FIXME $this->assertFileExists('web/libraries/civipkg/org.civicrm.api4/images/ApiExplorer.png');
+
+    // FIXME $this->assertEquals(...content...);
+    $this->markTestIncomplete('Not implemented');
+  }
+
   public function testPackagesPhp() {
     $this->assertFileExists('vendor/civicrm/civicrm-packages/HTML/QuickForm.php');
     $this->assertFileNotExists('web/libraries/civicrm/packages/HTML/QuickForm.php');
@@ -81,10 +79,10 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
     $paths = json_decode($proc->getOutput(), 1);
 
     $expectPaths = [];
-    $expectPaths['civicrm.root']['path'] = realpath(self::getTestDir()) . '/web/libraries/civicrm/core';
-    $expectPaths['civicrm.root']['url'] = 'FIXME/libraries/civicrm/core';
-    $expectPaths['civicrm.packages']['path'] = realpath(self::getTestDir()) . '/web/libraries/civicrm/packages';
-    $expectPaths['civicrm.packages']['url'] = 'FIXME/libraries/civicrm/packages';
+    $expectPaths['civicrm.root']['path'] = realpath(self::getTestDir()) . '/civicrm-assets/core';
+    $expectPaths['civicrm.root']['url'] = 'FIXME/civicrm-assets/core';
+    $expectPaths['civicrm.packages']['path'] = realpath(self::getTestDir()) . '/civicrm-assets/packages';
+    $expectPaths['civicrm.packages']['url'] = 'FIXME/civicrm-assets/packages';
     // FIXME url checks
 
     $count = 0;

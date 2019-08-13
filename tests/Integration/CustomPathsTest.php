@@ -1,9 +1,9 @@
 <?php
-namespace Civi\AssetPlugin;
+namespace Civi\AssetPlugin\Integration;
 
 use ProcessHelper\ProcessHelper as PH;
 
-class CustomPathsTest extends \Civi\AssetPlugin\AssetPluginTestCase {
+class CustomPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase {
 
   public static function getComposerJson() {
     return [

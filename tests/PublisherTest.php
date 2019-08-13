@@ -1,6 +1,6 @@
 <?php
 
-class PublisherTest extends \Civi\AssetPlugin\AssetPluginTestCase {
+class PublisherTest extends \PHPUnit\Framework\TestCase {
 
   public function testEmptyCfg() {
     $p = new \Civi\AssetPlugin\Publisher(NULL, NULL, []);

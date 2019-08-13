@@ -1,16 +1,16 @@
 <?php
-namespace Civi\AssetPlugin;
+namespace Civi\AssetPlugin\Integration;
 
 use ProcessHelper\ProcessHelper as PH;
 
-class AssetPluginTestCase extends \PHPUnit\Framework\TestCase {
+class IntegrationTestCase extends \PHPUnit\Framework\TestCase {
 
   /**
    * @return string
    *   The root folder of the civicrm-asset-plugin.
    */
   public static function getPluginSourceDir() {
-    return dirname(__DIR__);
+    return dirname(dirname(__DIR__));
   }
 
   /**
