@@ -23,6 +23,11 @@ class GlobPlus {
    * @return \Generator
    *   A list of matching file names, expressed relative to $baseDir.
    *   Order is not guaranteed.
+   *
+   * The current implementation does a single, full, recursive pass over the $baseDir, which
+   * is useful when there are many suffix patterns ("**.css"). However, you should still
+   * use tighter patterns ("css/*.css") if you can - because they're amenable to
+   * future optimization.
    */
   public static function find($baseDir, $pats, $excludeDirs = []) {
     // FIXME: If $pats doesn't have any '**.foo' items, then we don't need a full scan.
