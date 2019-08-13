@@ -170,9 +170,14 @@ class Publisher {
         ],
       ],
       'exclude-dir' => [
+        // Common VCS folders
         '.git',
         '.svn',
         '.bzr',
+        // Common top-level PHP folders
+        '/CRM',
+        '/Civi',
+        '/tests',
       ],
     ];
 

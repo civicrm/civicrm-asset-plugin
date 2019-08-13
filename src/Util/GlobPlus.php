@@ -56,9 +56,16 @@ class GlobPlus {
     $files = new \RecursiveIteratorIterator(
       new \RecursiveCallbackFilterIterator(
         new \RecursiveDirectoryIterator($baseDir, \RecursiveDirectoryIterator::SKIP_DOTS|\RecursiveDirectoryIterator::UNIX_PATHS),
-        function ($current, $key, $iterator) use ($excludeDirs) {
+        function ($current, $key, $iterator) use ($excludeDirs, $baseLen) {
           /** @var \SplFileInfo $current */
-          return !in_array($current->getBasename(), $excludeDirs);
+          if (in_array($current->getBasename(), $excludeDirs)) {
+            return FALSE;
+          }
+          $relPath = substr((string) $current, $baseLen);
+          if (in_array("/$relPath", $excludeDirs)) {
+            return FALSE;
+          }
+          return TRUE;
         }
       )
     );
