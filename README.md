@@ -12,7 +12,74 @@ It supports assets from:
 * `civicrm-packages`
 * Any extension containing an `info.xml` file
 
-## Testing
+## Example
+
+Suppose you have the following source tree:
+
+```
+vendor/
+  civicrm/
+    civicrm-core
+    civicrm-packages
+  civipkg/
+    org.civicrm.api4
+    org.civicrm.flexmailer
+    org.civicrm.shoreditch
+    uk.co.vedaconsulting.mosaico
+```
+
+By default, the assets from these folders would be published to:
+
+```
+web/
+  libraries/
+    civicrm/
+      core
+      packages
+      org.civicrm.api4
+      org.civicrm.flexmailer
+      org.civicrm.shoreditch
+      uk.co.vedaconsulting.mosaico
+```
+
+## Options
+
+In the root `composer.json`,  the site administrator may customize some
+options:
+
+```
+"extra": {
+  "civicrm-asset": {
+    ## Local file path of the public/web-readable folder
+    "path": "web/libraries/civicrm"
+
+    ## Public URL of the public/web-readable folder
+    "url": "libraries/civicrm"
+
+    ## Customize default list of assets
+    "assets:*": {
+      "include": ["**.js", "**.css"],
+      "exclude-dir": [".git"]
+    },
+
+    ## Customize the specific list of assets for "web/libraries/civicrm/core",
+    ## replacing the inclusion-list and exclusion-list.
+    "assets:core": {
+      "include": ["js/**", "css/**", "ang/**", "templates/**.png", "templates/**.jpg"],
+      "exclude-dir": [".git", "/CRM"]
+    },
+
+    ## Customize the specific list of assets for "web/libraries/civicrm/packages",
+    ## adding to the inclusion-list and exclusion-list.
+    "assets:packages": {
+      "+include": ["**.jpeg],
+      "+exclude-dir": ["_ORIGINAL_"]
+    }
+  }
+}
+```
+
+## Automated Tests
 
 The `tests/` folder includes integration tests written with PHPUnit.  Each
 integration-test generates a new folder/project with a plausible,
