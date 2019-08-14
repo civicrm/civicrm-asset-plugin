@@ -8,7 +8,7 @@ use Composer\IO\IOInterface;
 
 class ExtensionAssetRule extends AbstractAssetRule {
 
-  const RESERVED_NAMES = ['core', 'packages', 'drupal', 'drupal-8', 'joomla', 'wordpress'];
+  const RESERVED_NAMES = ['core', 'packages', 'drupal', 'drupal-8', 'joomla', 'wordpress', 'setup'];
 
   protected $extKey;
 
@@ -27,7 +27,8 @@ class ExtensionAssetRule extends AbstractAssetRule {
   public function createAssetMap(Publisher $publisher, IOInterface $io) {
     $localPath = $this->getLocalPath($publisher);
     $webPath = $this->getWebPath($publisher);
-    return "/* FIXME ExtensionAssetRule::createAssetMap ([cms.root]$webPath <=> $localPath) */\n";
+    return parent::createAssetMap($publisher, $io)
+      . "/* FIXME ExtensionAssetRule::createAssetMap ([cms.root]$webPath <=> $localPath) */\n";
   }
 
   public function getIncludes(Publisher $publisher) {

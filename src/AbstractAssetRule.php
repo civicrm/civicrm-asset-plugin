@@ -51,6 +51,21 @@ abstract class AbstractAssetRule implements AssetRuleInterface {
     }
   }
 
+  public function createAssetMap(Publisher $publisher, IOInterface $io) {
+    return sprintf("\$GLOBALS['civicrm_asset_map'][%s][%s] = \$baseDir . %s;\n",
+        var_export($this->getPackage()->getName(), 1),
+        var_export('src', 1),
+        var_export('/' . $this->srcPath, 1))
+      . sprintf("\$GLOBALS['civicrm_asset_map'][%s][%s] = \$baseDir . %s;\n",
+        var_export($this->getPackage()->getName(), 1),
+        var_export('dest', 1),
+        var_export('/' . $this->getLocalPath($publisher), 1))
+      . sprintf("\$GLOBALS['civicrm_asset_map'][%s][%s] = %s;\n",
+        var_export($this->getPackage()->getName(), 1),
+        var_export('url', 1),
+        var_export($this->getWebPath($publisher), 1));
+  }
+
   /**
    * @return \Composer\Package\PackageInterface
    */
