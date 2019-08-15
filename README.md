@@ -54,7 +54,7 @@ options:
     "path": "web/libraries/civicrm"
 
     ## Public URL of the public/web-readable folder
-    "url": "libraries/civicrm"
+    "url": "/libraries/civicrm"
 
     ## Customize default list of assets
     "assets:*": {
@@ -76,6 +76,32 @@ options:
       "+exclude-dir": ["_ORIGINAL_"]
     }
   }
+}
+```
+
+If you do not set these explicitly, then some defaults come into play. The
+defaults are calculated based on other aspects of the project.
+
+```js
+// Style: `drupal-composer/drupal-project`
+// Trigger: The `installer-paths` has a `drupal-library` or `drupal-core` mapping which uses `web/`
+{
+  "path": "web/libraries/civicrm",
+  "url": "/libraries/civicrm"
+}
+
+// Style: Drupal 8 Tarball / Drush Dl
+// Trigger: The `installer-paths` has a `drupal-library` or `drupal-core` mapping which does NOT use `web/`
+{
+  "path": "libraries/civicrm",
+  "url": "/libraries/civicrm"
+}
+
+// Style: Other
+// Trigger: No better default detected
+{
+  "path": "civicrm-assets"
+  "url": "/civicrm-assets"
 }
 ```
 
