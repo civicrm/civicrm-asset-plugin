@@ -47,7 +47,7 @@ web/
 In the root `composer.json`,  the site administrator may customize some
 options:
 
-```
+```json
 "extra": {
   "civicrm-asset": {
     ## Local file path of the public/web-readable folder
@@ -62,17 +62,17 @@ options:
       "exclude-dir": [".git"]
     },
 
-    ## Customize the specific list of assets for "web/libraries/civicrm/core",
-    ## replacing the inclusion-list and exclusion-list.
+    ## Customize the specific list of assets for "web/libraries/civicrm/core"
+    ## by replacing the inclusion-list and exclusion-list.
     "assets:core": {
       "include": ["js/**", "css/**", "ang/**", "templates/**.png", "templates/**.jpg"],
       "exclude-dir": [".git", "/CRM"]
     },
 
-    ## Customize the specific list of assets for "web/libraries/civicrm/packages",
-    ## adding to the inclusion-list and exclusion-list.
+    ## Customize the specific list of assets for "web/libraries/civicrm/packages"
+    ## by adding to the inclusion-list and exclusion-list.
     "assets:packages": {
-      "+include": ["**.jpeg],
+      "+include": ["**.jpeg"],
       "+exclude-dir": ["_ORIGINAL_"]
     }
   }
