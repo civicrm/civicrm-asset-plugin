@@ -6,14 +6,8 @@ use ProcessHelper\ProcessHelper as PH;
 class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase {
 
   public static function getComposerJson() {
-    return [
+    return parent::getComposerJson() + [
       'name' => 'test/default-paths',
-      'authors' => [
-        [
-          'name' => 'Tester McFakus',
-          'email' => 'tester@example.org',
-        ],
-      ],
       'require' => [
         'composer/installers' => '^1.2',
         'cweagans/composer-patches' => '^1.6.5',
@@ -29,16 +23,6 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTe
         'civicrm/civicrm-asset-plugin' => '@dev',
         'civicrm/civicrm-core' => '5.16.x-dev',
         'civicrm/civicrm-packages' => '5.16.x-dev',
-      ],
-      'repositories' => [
-        'src' => [
-          'type' => 'path',
-          'url' => self::getPluginSourceDir(),
-        ],
-        'drupal' => [
-          'type' => 'composer',
-          'url' => 'https://packages.drupal.org/8',
-        ],
       ],
       'minimum-stability' => 'dev',
       'extra' => [

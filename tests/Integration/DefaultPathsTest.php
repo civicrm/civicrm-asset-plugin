@@ -6,36 +6,13 @@ use ProcessHelper\ProcessHelper as PH;
 class DefaultPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase {
 
   public static function getComposerJson() {
-    return [
+    return parent::getComposerJson() + [
       'name' => 'test/default-paths',
-      'authors' => [
-        [
-          'name' => 'Tester McFakus',
-          'email' => 'tester@example.org',
-        ],
-      ],
       'require' => [
         'civicrm/civicrm-asset-plugin' => '@dev',
         'civicrm/civicrm-core' => '5.16.x-dev',
         'civicrm/civicrm-packages' => '5.16.x-dev',
         'civipkg/org.civicrm.api4' => '4.4.3',
-      ],
-      'repositories' => [
-        'src' => [
-          'type' => 'path',
-          'url' => self::getPluginSourceDir(),
-        ],
-        'api4' => [
-          'type' => 'package',
-          'package' => [
-            'name' => 'civipkg/org.civicrm.api4',
-            'version' => '4.4.3',
-            'dist' => [
-              'url' => 'https://github.com/civicrm/org.civicrm.api4/archive/4.4.2.zip',
-              'type' => 'zip',
-            ],
-          ],
-        ],
       ],
       'minimum-stability' => 'dev',
     ];

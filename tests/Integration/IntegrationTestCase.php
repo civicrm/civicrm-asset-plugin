@@ -5,6 +5,48 @@ use ProcessHelper\ProcessHelper as PH;
 
 class IntegrationTestCase extends \PHPUnit\Framework\TestCase {
 
+  public static function getComposerJson() {
+    return [
+      'authors' => [
+        [
+          'name' => 'Tester McFakus',
+          'email' => 'tester@example.org',
+        ],
+      ],
+
+      'repositories' => [
+        'civicrm-asset-plugin' => [
+          'type' => 'path',
+          'url' => self::getPluginSourceDir(),
+        ],
+
+        'd8' => [
+          'type' => 'composer',
+          'url' => 'https://packages.drupal.org/8',
+        ],
+
+        // FIXME: Replace when there's a live ext bridge
+        'api4' => [
+          'type' => 'package',
+          'package' => [
+            'name' => 'civipkg/org.civicrm.api4',
+            'version' => '4.4.3',
+            'dist' => [
+              'url' => 'https://github.com/civicrm/org.civicrm.api4/archive/4.4.2.zip',
+              'type' => 'zip',
+            ],
+          ],
+        ],
+
+        // FIXME: Remove when published properly
+        "extrafiles" => [
+          "type" => "vcs",
+          "url" => "https://github.com/totten/ComposerExtraFiles.git",
+        ],
+      ],
+    ];
+  }
+
   /**
    * @return string
    *   The root folder of the civicrm-asset-plugin.
