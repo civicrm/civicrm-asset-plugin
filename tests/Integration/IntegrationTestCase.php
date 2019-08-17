@@ -98,8 +98,8 @@ class IntegrationTestCase extends \PHPUnit\Framework\TestCase {
       chdir(self::$origDir);
       self::$origDir = NULL;
 
-      if (getenv('KEEP_TEST_PROJECT')) {
-        fwrite(STDERR, sprintf("\n\nTest project created (%s): %s\n", __CLASS__, self::$testDir));
+      if (getenv('USE_TEST_PROJECT')) {
+        fwrite(STDERR, sprintf("\n\nTest project location (%s): %s\n", __CLASS__, self::$testDir));
       }
       else {
         self::cleanDir(self::$testDir);

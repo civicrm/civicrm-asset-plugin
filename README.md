@@ -137,3 +137,16 @@ closesly, set the `DEBUG` variable, as in:
 ```
 [~/src/civicrm-asset-plugin] env DEBUG=2 phpunit
 ```
+
+## Local Dev Harness
+
+What if you want to produce an environment which uses the current plugin
+code - one where you can quickly re-run `composer` commands while
+iterating on code?
+
+You may use any of the integration-tests to initialize a baseline
+environment:
+
+```
+env USE_TEST_PROJECT=$HOME/src/myprj phpunit tests/Integration/DrupalProjectPathsTest.php
+```
