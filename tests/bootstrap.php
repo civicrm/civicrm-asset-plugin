@@ -1,6 +1,7 @@
 <?php
 
 #### Find primary autoloader
+putenv('CIVICRM_COMPOSER_ASSET=');
 $autoloaders = array(
   implode(DIRECTORY_SEPARATOR, array(dirname(__DIR__), 'vendor', 'autoload.php')),
   implode(DIRECTORY_SEPARATOR, array(dirname(dirname(dirname(dirname(__DIR__)))), 'vendor', 'autoload.php')),

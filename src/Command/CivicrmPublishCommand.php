@@ -22,12 +22,12 @@ class CivicrmPublishCommand extends \Composer\Command\BaseCommand {
   }
 
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $extra = $this->getComposer()->getPackage()->getExtra();
-    if ($fileMode = $input->getOption('file-mode')) {
-      $extra['civicrm-asset']['file-mode'] = $fileMode;
+    $fileMode = $input->getOption('file-mode');
+    if ($fileMode && in_array($fileMode, ['auto','copy','symlink','symdir'])) {
+      putenv('CIVICRM_COMPOSER_ASSET=' . $fileMode);
     }
 
-    $p = new Publisher($this->getComposer(), $this->getIO(), $extra);
+    $p = new Publisher($this->getComposer(), $this->getIO());
 
     $tgtPath = $p->getLocalPath();
     if ($input->getOption('delete') && file_exists($tgtPath)) {

@@ -111,7 +111,7 @@ class Publisher {
    *    - 'symdir': Symlink top-level directories, even if that exposes unrelated files
    */
   public function getFileMode() {
-    $mode = $this->getConfig()['file-mode'];
+    $mode = getenv('CIVICRM_COMPOSER_ASSET') ?? $this->getConfig()['file-mode'];
 
     if (empty($mode) || $mode === 'auto') {
       // FIXME
