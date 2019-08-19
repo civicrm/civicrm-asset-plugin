@@ -38,9 +38,9 @@ class DefaultPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase
   public function testApi4Assets() {
     $this->assertFileExists('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png');
     $this->assertFileExists('civicrm-assets/org.civicrm.api4/images/ApiExplorer.png');
-    $this->assertEquals(
-      file_get_contents('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png'),
-      file_get_contents('civicrm-assets/org.civicrm.api4/images/ApiExplorer.png'),
+    $this->assertSameFileContent(
+      'vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png',
+      'civicrm-assets/org.civicrm.api4/images/ApiExplorer.png',
       'Input and output files should have the same content'
     );
   }

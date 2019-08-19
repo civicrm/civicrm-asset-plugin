@@ -57,9 +57,9 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTe
   public function testCivicrmCss() {
     $this->assertFileExists('vendor/civicrm/civicrm-core/css/civicrm.css');
     $this->assertFileExists('web/libraries/civicrm/core/css/civicrm.css');
-    $this->assertEquals(
-      file_get_contents('vendor/civicrm/civicrm-core/css/civicrm.css'),
-      file_get_contents('web/libraries/civicrm/core/css/civicrm.css'),
+    $this->assertSameFileContent(
+      'vendor/civicrm/civicrm-core/css/civicrm.css',
+      'web/libraries/civicrm/core/css/civicrm.css',
       'Input and output files should have the same content'
     );
   }

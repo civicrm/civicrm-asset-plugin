@@ -45,9 +45,9 @@ class CustomPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase 
   public function testApi4Assets() {
     $this->assertFileExists('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png');
     $this->assertFileExists('htdocs/foo-civi-assets/org.civicrm.api4/images/ApiExplorer.png');
-    $this->assertEquals(
-      file_get_contents('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png'),
-      file_get_contents('htdocs/foo-civi-assets/org.civicrm.api4/images/ApiExplorer.png'),
+    $this->assertSameFileContent(
+      'vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png',
+      'htdocs/foo-civi-assets/org.civicrm.api4/images/ApiExplorer.png',
       'Input and output files should have the same content'
     );
   }
