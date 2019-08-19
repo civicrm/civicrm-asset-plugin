@@ -23,7 +23,7 @@ class CivicrmPublishCommand extends \Composer\Command\BaseCommand {
 
   protected function execute(InputInterface $input, OutputInterface $output) {
     $fileMode = $input->getOption('file-mode');
-    if ($fileMode && in_array($fileMode, ['auto','copy','symlink','symdir'])) {
+    if ($fileMode && in_array($fileMode, ['auto', 'copy', 'symlink', 'symdir'])) {
       putenv('CIVICRM_COMPOSER_ASSET=' . $fileMode);
     }
 
