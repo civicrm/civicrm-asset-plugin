@@ -55,7 +55,6 @@ class Publisher {
    * assets.
    */
   public function publishAllAssets() {
-    $this->io->write("\n<info>Publishing CiviCRM assets (<comment>{$this->getLocalPath()}</comment>)</info>");
     foreach ($this->createAllAssetRules() as $assetRule) {
       $assetRule->publish($this, $this->io);
     }
@@ -71,7 +70,6 @@ class Publisher {
     $vendorPath = $this->composer->getConfig()->get('vendor-dir');
     $file = $vendorPath . "/composer/autoload_civicrm_asset.php";
 
-    $this->io->write("<info>  - CiviCRM asset map</info>");
     $snippets = ["<?php\n"];
     $snippets[] = "global \$civicrm_paths;\n";
     $snippets[] = "\$vendorDir = dirname(dirname(__FILE__));\n";
@@ -101,6 +99,26 @@ class Publisher {
    */
   public function getWebPath() {
     return rtrim($this->config['url'], '/');
+  }
+
+  /**
+   * Determine the file-writing mode.
+   *
+   * @return string
+   *   One of the following:
+   *    - 'copy': Do not use symlinks
+   *    - 'symlink': Symlink on a file-by-file basis
+   *    - 'symdir': Symlink top-level directories, even if that exposes unrelated files
+   */
+  public function getFileMode() {
+    $mode = $this->getConfig()['file-mode'];
+
+    if (empty($mode) || $mode === 'auto') {
+      // FIXME
+      return 'copy';
+    }
+
+    return $mode;
   }
 
   /**

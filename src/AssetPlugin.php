@@ -71,6 +71,7 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
    * @param \Composer\Script\Event $event
    */
   public function onAutoloadDump(Event $event) {
+    $this->io->write("  - <info>CiviCRM asset map</info>");
     $file = $this->publisher->createAssetMap();
 
     $rootPackage = $event->getComposer()->getPackage();

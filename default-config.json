@@ -1,7 +1,7 @@
 {
     "path": "civicrm-assets",
     "url": "/civicrm-assets",
-    "symlink": false,
+    "file-mode": "auto",
     "assets:*": {
         "include": [
             "**.html",

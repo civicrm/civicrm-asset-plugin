@@ -4,8 +4,14 @@ namespace Civi\AssetPlugin;
 
 use Civi\AssetPlugin\Util\GlobPlus;
 use Composer\IO\IOInterface;
+use Composer\Util\Filesystem;
 
 abstract class AbstractAssetRule implements AssetRuleInterface {
+
+  /**
+   * @var \Composer\Util\Filesystem
+   */
+  protected $cfs;
 
   /**
    * @var \Composer\Package\PackageInterface
@@ -38,16 +44,93 @@ abstract class AbstractAssetRule implements AssetRuleInterface {
   }
 
   public function publish(Publisher $publisher, IOInterface $io) {
-    $localPath = $this->getLocalPath($publisher);
-    // $webPath = $this->getWebPath($publisher);
-    $globPatterns = $this->getIncludes($publisher);
+    $this->cfs = $this->cfs ?? new Filesystem();
 
-    $io->write("DRY RUN: Map from {$this->srcPath} to {$localPath}");
-    $io->write("         With: " . implode(', ', $globPatterns));
+    $srcPathAbs = $this->srcPath;
+    $srcPathRel = preg_replace(';^' . preg_quote(getcwd(), ';') . '/?;', '', $srcPathAbs);
+    $tgtPathRel = $this->getLocalPath($publisher);
+    $tgtPathAbs = getcwd() . DIRECTORY_SEPARATOR . $tgtPathRel;
 
-    $files = GlobPlus::find($this->srcPath, $globPatterns, $this->getExcludeDirs($publisher));
+    switch ($publisher->getFileMode()) {
+      case 'copy':
+        $io->write("  - <info>Copy files from <comment>{$srcPathRel}</comment> to <comment>{$tgtPathRel}</comment></info>", TRUE, IOInterface::VERBOSE);
+        $files = GlobPlus::find($this->srcPath, $this->getIncludes($publisher), $this->getExcludeDirs($publisher));
+        $this->syncFiles($io, $this->srcPath, $tgtPathAbs, $files, FALSE);
+        break;
+
+      case 'symlink':
+        $io->write("  - <info>Symlink files from <comment>{$srcPathRel}</comment> to <comment>{$tgtPathRel}</comment></info>", TRUE, IOInterface::VERBOSE);
+        $files = GlobPlus::find($this->srcPath, $this->getIncludes($publisher), $this->getExcludeDirs($publisher));
+        $this->syncFiles($io, $this->srcPath, $tgtPathAbs, $files, TRUE);
+        break;
+
+      case 'symdir':
+        $io->write("  - <info>Symlink folder from <comment>{$srcPathRel}</comment> to <comment>{$tgtPathRel}</comment></info>", TRUE, IOInterface::VERBOSE);
+        $this->cfs->removeDirectory($tgtPathAbs);
+        $this->cfs->ensureDirectoryExists(dirname($tgtPathAbs));
+        $this->cfs->relativeSymlink($this->srcPath, $tgtPathAbs);
+        break;
+
+      default:
+        throw new \RuntimeException("Unrecognized symlink mode ({$publisher->getFileMode()}). Use one of [none,file,dir,auto]");
+    }
+  }
+
+  /**
+   * @param \Composer\IO\IOInterface $io
+   * @param string $srcPath
+   * @param string $tgtPath
+   * @param \Generator|array $files
+   * @param bool $preferLink
+   */
+  protected function syncFiles(IOInterface $io, $srcPath, $tgtPath, $files, $preferLink) {
+    if (is_link($tgtPath)) {
+      // Transition form "symdir" to "file" or "symlink"
+      unlink($tgtPath);
+    }
+
+    $count = 0;
+
     foreach ($files as $file) {
-      $io->write(" - $file");
+      $count += $this->copyFile($io, $file, "{$srcPath}/{$file}", "{$tgtPath}/{$file}", $preferLink);
+    }
+
+    if ($count > 0) {
+      $io->write("", TRUE, IOInterface::VERY_VERBOSE);
+    }
+  }
+
+  protected function copyFile(IOInterface $io, $file, $srcFile, $tgtFile, $preferLink) {
+    $this->cfs->ensureDirectoryExists(dirname($tgtFile));
+    $srcStat = stat($srcFile);
+    $tgtStat = @stat($tgtFile);
+    $isActiveLink = ($tgtStat !== FALSE) && is_link($tgtFile);
+
+    if ($preferLink) {
+      if ($isActiveLink && realpath($tgtFile) === realpath($srcFile)) {
+        return 0;
+      }
+
+      if ($tgtStat !== FALSE) {
+        unlink($tgtFile);
+      }
+
+      $io->write(" $file", FALSE, IOInterface::VERY_VERBOSE);
+      $this->cfs->relativeSymlink($srcFile, $tgtFile);
+      return 1;
+    }
+    else {
+      if ($isActiveLink) {
+        unlink($tgtFile);
+      }
+
+      if (!$isActiveLink && $tgtStat !== FALSE && $srcStat['mtime'] <= $tgtStat['mtime'] && $srcStat['size'] === $tgtStat['size']) {
+        return 0;
+      }
+
+      $io->write(" $file", FALSE, IOInterface::VERY_VERBOSE);
+      $this->cfs->copy($srcFile, $tgtFile);
+      return 1;
     }
   }
 
