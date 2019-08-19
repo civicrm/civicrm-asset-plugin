@@ -76,6 +76,20 @@ abstract class AbstractAssetRule implements AssetRuleInterface {
     }
   }
 
+  public function unpublish(Publisher $publisher, IOInterface $io) {
+    $this->cfs = $this->cfs ?? new Filesystem();
+
+    $tgtPathRel = $this->getLocalPath($publisher);
+    $tgtPathAbs = getcwd() . DIRECTORY_SEPARATOR . $tgtPathRel;
+
+    if (!file_exists($tgtPathAbs)) {
+      return;
+    }
+
+    $io->write("  - <info>Removing published assets from <comment>{$tgtPathRel}</comment></info>", TRUE, IOInterface::VERBOSE);
+    $this->cfs->removeDirectory($tgtPathAbs);
+  }
+
   /**
    * @param \Composer\IO\IOInterface $io
    * @param string $srcPath

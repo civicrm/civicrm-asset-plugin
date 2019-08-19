@@ -45,6 +45,7 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
     return [
       PackageEvents::POST_PACKAGE_INSTALL => ['onPackageInstall', -100],
       PackageEvents::POST_PACKAGE_UPDATE => ['onPackageUpdate', -100],
+      PackageEvents::PRE_PACKAGE_UNINSTALL => ['onPackageUninstall'],
       ScriptEvents::PRE_AUTOLOAD_DUMP => ['onAutoloadDump', -100],
     ];
   }
@@ -65,6 +66,15 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
   public function onPackageUpdate(PackageEvent $event) {
     $package = $event->getOperation()->getTargetPackage();
     $this->publisher->publishAssets($package);
+  }
+
+  /**
+   * @param \Composer\Installer\PackageEvent $event
+   *   The event.
+   */
+  public function onPackageUninstall(PackageEvent $event) {
+    $package = $event->getOperation()->getPackage();
+    $this->publisher->unpublishAssets($package);
   }
 
   /**

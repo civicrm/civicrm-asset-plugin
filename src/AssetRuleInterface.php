@@ -25,4 +25,10 @@ interface AssetRuleInterface {
    */
   public function publish(Publisher $publisher, IOInterface $io);
 
+  /**
+   * @param \Civi\AssetPlugin\Publisher $publisher
+   * @param \Composer\IO\IOInterface $io
+   */
+  public function unpublish(Publisher $publisher, IOInterface $io);
+
 }

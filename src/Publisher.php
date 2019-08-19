@@ -50,6 +50,13 @@ class Publisher {
     }
   }
 
+  public function unpublishAssets(PackageInterface $package) {
+    $assetRule = $this->createAssetRule($package);
+    if ($assetRule) {
+      $assetRule->unpublish($this, $this->io);
+    }
+  }
+
   /**
    * Find all Civi-related packages; extract and publish all relevant
    * assets.
