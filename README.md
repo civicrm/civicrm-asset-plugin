@@ -56,6 +56,27 @@ options:
     ## Public URL of the public/web-readable folder
     "url": "/libraries/civicrm"
 
+    ## How to put the file in the public/web-readable folder?
+    ##
+    ## TIP: For a safe+portable default, use "copy". On a local-dev machine, set environment variable
+    ## `CIVICRM_COMPOSER_ASSET=symdir` so that all local builds use "symdir".
+    ##
+    ## Options:
+    ##  - "copy": Each asset/file is individually copied.
+    ##  - "symlink": Each asset/file is individually symlinked.
+    ##  - "symdir": The main directories are symlinked, bringing all files underneath.
+    ##
+    ##                                                   "copy"        "symlink"       "symdir"
+    ##                                                   ------        ---------       --------
+    ## Compatiblity: Windows                             Good          Poor            Poor
+    ## Compatiblity: Linux/OSX                           Good          Good            Good
+    ## Compatiblity: HTTPD                               Good          Depends         Depends
+    ## Precision: Does it *only* publish assets?         Good          Good            Poor
+    ## Updating: Do code-edits require manual sync?      Manual        Automatic       Automatic
+    ## Updating: Do new-files require manual sync?       Manual        Manual          Automatic
+    ##
+    "file-mode": "copy",
+
     ## Customize default list of assets
     "assets:*": {
       "include": ["**.js", "**.css"],
