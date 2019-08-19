@@ -148,5 +148,5 @@ You may use any of the integration-tests to initialize a baseline
 environment:
 
 ```
-env USE_TEST_PROJECT=$HOME/src/myprj phpunit tests/Integration/DrupalProjectPathsTest.php
+env USE_TEST_PROJECT=$HOME/src/myprj DEBUG=2 phpunit tests/Integration/DrupalProjectPathsTest.php
 ```
