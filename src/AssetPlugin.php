@@ -43,9 +43,9 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
    */
   public static function getSubscribedEvents() {
     return [
-      PackageEvents::POST_PACKAGE_INSTALL => 'onPackageInstall',
-      PackageEvents::POST_PACKAGE_UPDATE => 'onPackageUpdate',
-      ScriptEvents::PRE_AUTOLOAD_DUMP => 'onAutoloadDump',
+      PackageEvents::POST_PACKAGE_INSTALL => ['onPackageInstall', -100],
+      PackageEvents::POST_PACKAGE_UPDATE => ['onPackageUpdate', -100],
+      ScriptEvents::PRE_AUTOLOAD_DUMP => ['onAutoloadDump', -100],
     ];
   }
 
