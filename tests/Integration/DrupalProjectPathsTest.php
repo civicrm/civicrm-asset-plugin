@@ -3,11 +3,21 @@ namespace Civi\AssetPlugin\Integration;
 
 use ProcessHelper\ProcessHelper as PH;
 
+/**
+ * Class DrupalProjectPathsTest
+ * @package Civi\AssetPlugin\Integration
+ *
+ * In this case, we follow the default project structure from
+ * 'drupal-composer/drupal-project' and simply add 'civicrm-{core,asset-plugin}`
+ * as requirements.
+ *
+ * The default paths are determined automatically from the Drupal config.
+ */
 class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase {
 
   public static function getComposerJson() {
     return parent::getComposerJson() + [
-      'name' => 'test/default-paths',
+      'name' => 'test/drupal-paths',
       'require' => [
         'composer/installers' => '^1.2',
         'cweagans/composer-patches' => '^1.6.5',
@@ -41,17 +51,17 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTe
     parent::setUpBeforeClass();
     self::initTestProject(static::getComposerJson());
     PH::runOk('composer install');
+    // PH::runOk('composer civicrm:publish');
   }
 
   public function testCivicrmCss() {
-    // Source file:
     $this->assertFileExists('vendor/civicrm/civicrm-core/css/civicrm.css');
-
-    // Target file:
-    // FIXME $this->assertFileExists('web/libraries/civicrm/core/css/civicrm.css');
-
-    // FIXME $this->assertEquals(...content...);
-    $this->markTestIncomplete('Not implemented');
+    $this->assertFileExists('web/libraries/civicrm/core/css/civicrm.css');
+    $this->assertEquals(
+      file_get_contents('vendor/civicrm/civicrm-core/css/civicrm.css'),
+      file_get_contents('web/libraries/civicrm/core/css/civicrm.css'),
+      'Input and output files should have the same content'
+    );
   }
 
   public function testPackagesPhp() {
@@ -61,7 +71,7 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTe
 
   public function testAutoloadCivicrmPaths() {
     $proc = PH::runOk(['php -r @CODE', 'CODE' => 'require_once "vendor/autoload.php"; echo json_encode($GLOBALS["civicrm_paths"], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);']);
-    $paths = json_decode($proc->getOutput(), 1);
+    $actualPaths = json_decode($proc->getOutput(), 1);
 
     $expectPaths = [];
     $expectPaths['civicrm.root']['path'] = realpath(self::getTestDir()) . '/web/libraries/civicrm/core';
@@ -71,17 +81,15 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTe
     // FIXME url checks
 
     $count = 0;
-    foreach ($expectPaths as $pathVar => $variants) {
-      foreach ($variants as $variant => $expectPathValue) {
-        $this->assertNotEmpty(($expectPathValue));
-        // FIXME $this->assertTrue(file_exists($expectPathValue));
-        // FIXME $this->assertTrue(file_exists($realActualPathValue));
-        $this->assertEquals($expectPathValue, $paths[$pathVar][$variant],
-          "Expect paths[$pathVar][$variant] to match");
-        $count++;
-      }
+    foreach ($expectPaths as $pathVar => $expectValues) {
+      $this->assertNotEmpty($expectValues['path']);
+      $this->assertNotEmpty($expectValues['url']);
+      $this->assertTrue(file_exists($expectValues['path']));
+      $this->assertEquals($expectValues['path'], $actualPaths[$pathVar]['path'], "Expect paths[$pathVar][path] to match");
+      $this->assertEquals($expectValues['url'], $actualPaths[$pathVar]['url'], "Expect paths[$pathVar][url] to match");
+      $count++;
     }
-    $this->assertEquals(4, $count);
+    $this->assertEquals(2, $count);
   }
 
 }

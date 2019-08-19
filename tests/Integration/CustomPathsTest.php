@@ -29,28 +29,27 @@ class CustomPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase 
     parent::setUpBeforeClass();
     self::initTestProject(static::getComposerJson());
     PH::runOk('composer install');
+    // PH::runOk('composer civicrm:publish');
   }
 
   public function testCivicrmCss() {
-    // Source file:
     $this->assertFileExists('vendor/civicrm/civicrm-core/css/civicrm.css');
-
-    // Target file:
-    // FIXME $this->assertFileExists('htdocs/foo-civi-assets/core/css/civicrm.css');
-
-    // FIXME $this->assertEquals(...content...);
-    $this->markTestIncomplete('Not implemented');
+    $this->assertFileExists('htdocs/foo-civi-assets/core/css/civicrm.css');
+    $this->assertEquals(
+      file_get_contents('vendor/civicrm/civicrm-core/css/civicrm.css'),
+      file_get_contents('htdocs/foo-civi-assets/core/css/civicrm.css'),
+      'Input and output files should have the same content'
+    );
   }
 
   public function testApi4Assets() {
-    // Source file:
     $this->assertFileExists('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png');
-
-    // Target file:
-    // FIXME $this->assertFileExists('htdocs/foo-civi-assets/org.civicrm.api4/images/ApiExplorer.png');
-
-    // FIXME $this->assertEquals(...content...);
-    $this->markTestIncomplete('Not implemented');
+    $this->assertFileExists('htdocs/foo-civi-assets/org.civicrm.api4/images/ApiExplorer.png');
+    $this->assertEquals(
+      file_get_contents('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png'),
+      file_get_contents('htdocs/foo-civi-assets/org.civicrm.api4/images/ApiExplorer.png'),
+      'Input and output files should have the same content'
+    );
   }
 
   public function testPackagesPhp() {
@@ -63,7 +62,7 @@ class CustomPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase 
       0 => 'php -r @CODE',
       'CODE' => 'require_once "vendor/autoload.php"; echo json_encode($GLOBALS["civicrm_paths"], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);',
     ]);
-    $paths = json_decode($proc->getOutput(), 1);
+    $actualPaths = json_decode($proc->getOutput(), 1);
 
     $expectPaths = [];
     $expectPaths['civicrm.root']['path'] = realpath(self::getTestDir()) . '/htdocs/foo-civi-assets/core';
@@ -73,17 +72,17 @@ class CustomPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase 
     // FIXME url checks
 
     $count = 0;
-    foreach ($expectPaths as $pathVar => $variants) {
-      foreach ($variants as $variant => $expectPathValue) {
-        $this->assertNotEmpty(($expectPathValue));
-        // FIXME $this->assertTrue(file_exists($expectPathValue));
-        // FIXME $this->assertTrue(file_exists($realActualPathValue));
-        $this->assertEquals($expectPathValue, $paths[$pathVar][$variant],
-          "Expect paths[$pathVar][$variant] to match");
-        $count++;
-      }
+
+    foreach ($expectPaths as $pathVar => $expectValues) {
+      $this->assertNotEmpty($expectValues['path']);
+      $this->assertNotEmpty($expectValues['url']);
+      $this->assertTrue(file_exists($expectValues['path']));
+      $this->assertEquals($expectValues['path'], $actualPaths[$pathVar]['path'], "Expect paths[$pathVar][path] to match");
+      $this->assertEquals($expectValues['url'], $actualPaths[$pathVar]['url'], "Expect paths[$pathVar][url] to match");
+      $count++;
     }
-    $this->assertEquals(4, $count);
+
+    $this->assertEquals(2, $count);
   }
 
 }
