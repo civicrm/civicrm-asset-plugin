@@ -19,10 +19,9 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTe
         'webflo/drupal-finder' => '^1.0.0',
         'webmozart/path-util' => '^2.3',
         'zaporylie/composer-drupal-optimizations' => '^1.0',
-
         'civicrm/civicrm-asset-plugin' => '@dev',
-        'civicrm/civicrm-core' => '5.16.x-dev',
-        'civicrm/civicrm-packages' => '5.16.x-dev',
+        'civicrm/civicrm-core' => 'dev-master-composer-all-the-things',
+        'civicrm/civicrm-packages' => 'dev-master',
       ],
       'minimum-stability' => 'dev',
       'extra' => [
