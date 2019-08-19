@@ -48,6 +48,7 @@ class IntegrationTestCase extends \PHPUnit\Framework\TestCase {
         "civicrm-core" => [
           "type" => "vcs",
           "url" => "https://github.com/totten/civicrm-core.git",
+          // "url" => "/Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm",
         ],
       ],
     ];
@@ -121,6 +122,40 @@ class IntegrationTestCase extends \PHPUnit\Framework\TestCase {
    */
   private static function cleanDir($dir) {
     PH::runOk(['if [ -d @DIR ]; then rm -rf @DIR ; fi', 'DIR' => $dir]);
+  }
+
+  public function assertSameFileContent($expected, $actual) {
+    $this->assertEquals(file_get_contents($expected), file_get_contents($actual));
+  }
+
+  public function assertFileIsSymlink($path) {
+    $this->assertTrue(file_exists($path), "Path ($path) should exist (symlink file)");
+    $this->assertTrue(is_link($path), "Path ($path) should be a symlink");
+
+    $linkTgt = readlink($path);
+    $this->assertTrue(is_string($linkTgt));
+    $this->assertTrue(is_file(dirname($path) . '/' . $linkTgt), "Path ($path) should be symlinking pointing to a file. Found tgt ($linkTgt)");
+  }
+
+  public function assertFileIsNormal($path) {
+    $this->assertTrue(file_exists($path), "Path ($path) should exist (normal file)");
+    $this->assertTrue(is_file($path), "Path ($path) should be a normal file");
+    $this->assertTrue(!is_link($path), "Path ($path) should not be a symlink");
+  }
+
+  public function assertDirIsSymlink($path) {
+    $this->assertTrue(file_exists($path), "Path ($path) should exist (symlink dir)");
+    $this->assertTrue(is_link($path), "Path ($path) should be a symlink");
+
+    $linkTgt = readlink($path);
+    $this->assertTrue(is_string($linkTgt));
+    $this->assertTrue(is_dir(dirname($path) . '/' . $linkTgt), "Path ($path) should be symlinking pointing to a dir. Found tgt ($linkTgt");
+  }
+
+  public function assertDirIsNormal($path) {
+    $this->assertTrue(file_exists($path), "Path ($path) should exist (normal dir)");
+    $this->assertTrue(!is_link($path), "Path ($path) should not be a symlink");
+    $this->assertTrue(is_dir($path), "Path ($path) should be a dir");
   }
 
 }
