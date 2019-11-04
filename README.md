@@ -47,51 +47,51 @@ web/
 In the root `composer.json`,  the site administrator may customize some
 options:
 
-```json
+```js
 "extra": {
   "civicrm-asset": {
-    ## Local file path of the public/web-readable folder
+    // Local file path of the public/web-readable folder
     "path": "web/libraries/civicrm"
 
-    ## Public URL of the public/web-readable folder
+    // Public URL of the public/web-readable folder
     "url": "/libraries/civicrm"
 
-    ## How to put the file in the public/web-readable folder?
-    ##
-    ## TIP: For a safe+portable default, use "copy". On a local-dev machine, set environment variable
-    ## `CIVICRM_COMPOSER_ASSET=symdir` so that all local builds use "symdir".
-    ##
-    ## Options:
-    ##  - "copy": Each asset/file is individually copied.
-    ##  - "symlink": Each asset/file is individually symlinked.
-    ##  - "symdir": The main directories are symlinked, bringing all files underneath.
-    ##
-    ##                                                   "copy"        "symlink"       "symdir"
-    ##                                                   ------        ---------       --------
-    ## Compatiblity: Windows                             Good          Poor            Poor
-    ## Compatiblity: Linux/OSX                           Good          Good            Good
-    ## Compatiblity: HTTPD                               Good          Depends         Depends
-    ## Precision: Does it *only* publish assets?         Good          Good            Poor
-    ## Updating: Do code-edits require manual sync?      Manual        Automatic       Automatic
-    ## Updating: Do new-files require manual sync?       Manual        Manual          Automatic
-    ##
+    // How to put the file in the public/web-readable folder?
+    //
+    // TIP: For a safe+portable default, use "copy". On a local-dev machine, set environment variable
+    // `CIVICRM_COMPOSER_ASSET=symdir` so that all local builds use "symdir".
+    //
+    // Options:
+    //  - "copy": Each asset/file is individually copied.
+    //  - "symlink": Each asset/file is individually symlinked.
+    //  - "symdir": The main directories are symlinked, bringing all files underneath.
+    //
+    //                                                   "copy"        "symlink"       "symdir"
+    //                                                   ------        ---------       --------
+    // Compatiblity: Windows                             Good          Poor            Poor
+    // Compatiblity: Linux/OSX                           Good          Good            Good
+    // Compatiblity: HTTPD                               Good          Depends         Depends
+    // Precision: Does it *only* publish assets?         Good          Good            Poor
+    // Updating: Do code-edits require manual sync?      Manual        Automatic       Automatic
+    // Updating: Do new-files require manual sync?       Manual        Manual          Automatic
+    //
     "file-mode": "copy",
 
-    ## Customize default list of assets
+    // Customize default list of assets
     "assets:*": {
       "include": ["**.js", "**.css"],
       "exclude-dir": [".git"]
     },
 
-    ## Customize the specific list of assets for "web/libraries/civicrm/core"
-    ## by replacing the inclusion-list and exclusion-list.
+    // Customize the specific list of assets for "web/libraries/civicrm/core"
+    // by replacing the inclusion-list and exclusion-list.
     "assets:core": {
       "include": ["js/**", "css/**", "ang/**", "templates/**.png", "templates/**.jpg"],
       "exclude-dir": [".git", "/CRM"]
     },
 
-    ## Customize the specific list of assets for "web/libraries/civicrm/packages"
-    ## by adding to the inclusion-list and exclusion-list.
+    // Customize the specific list of assets for "web/libraries/civicrm/packages"
+    // by adding to the inclusion-list and exclusion-list.
     "assets:packages": {
       "+include": ["**.jpeg"],
       "+exclude-dir": ["_ORIGINAL_"]
