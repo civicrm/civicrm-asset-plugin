@@ -57,9 +57,9 @@ class DefaultPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase
     // The JS/CSS assets are sync'd to web dir, but the $civicrm_paths should still autoload PHP from the src folder.
     $expectPaths = [];
     $expectPaths['civicrm.root']['path'] = realpath(self::getTestDir()) . '/vendor/civicrm/civicrm-core';
-    $expectPaths['civicrm.root']['url'] = 'FIXME/civicrm-assets/core';
+    $expectPaths['civicrm.root']['url'] = '/civicrm-assets/core';
     $expectPaths['civicrm.packages']['path'] = realpath(self::getTestDir()) . '/vendor/civicrm/civicrm-packages';
-    $expectPaths['civicrm.packages']['url'] = 'FIXME/civicrm-assets/packages';
+    $expectPaths['civicrm.packages']['url'] = '/civicrm-assets/packages';
     // FIXME url checks
 
     $count = 0;
