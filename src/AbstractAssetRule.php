@@ -149,14 +149,14 @@ abstract class AbstractAssetRule implements AssetRuleInterface {
   }
 
   public function createAssetMap(Publisher $publisher, IOInterface $io) {
-    return sprintf("\$GLOBALS['civicrm_asset_map'][%s][%s] = \$baseDir . %s;\n",
+    return sprintf("\$GLOBALS['civicrm_asset_map'][%s][%s] = %s;\n",
         var_export($this->getPackage()->getName(), 1),
         var_export('src', 1),
-        var_export('/' . $this->srcPath, 1))
-      . sprintf("\$GLOBALS['civicrm_asset_map'][%s][%s] = \$baseDir . %s;\n",
+        $this->exportPath($this->srcPath))
+      . sprintf("\$GLOBALS['civicrm_asset_map'][%s][%s] = %s;\n",
         var_export($this->getPackage()->getName(), 1),
         var_export('dest', 1),
-        var_export('/' . $this->getLocalPath($publisher), 1))
+        $this->exportPath($this->getLocalPath($publisher)))
       . sprintf("\$GLOBALS['civicrm_asset_map'][%s][%s] = %s;\n",
         var_export($this->getPackage()->getName(), 1),
         var_export('url', 1),
@@ -206,6 +206,28 @@ abstract class AbstractAssetRule implements AssetRuleInterface {
    */
   protected function getWebPath(Publisher $publisher) {
     return $publisher->getWebPath() . '/' . $this->publicName;
+  }
+
+  /**
+   * @param string $path
+   *   Ex: '/var/www/foo/bar';
+   * @param string|NULL $cwd
+   *   The current working directory, to which we want things to be relative.
+   * @return string
+   *   PHP-encoded expression for $path, relative to a `$baseDir` variable
+   */
+  protected function exportPath($path, $cwd = NULL) {
+    // FIXME Windows, but don't add dep-hell
+    $isAbsolute = $path{0} === '/';
+    if (!$isAbsolute) {
+      return '$baseDir . ' . var_export('/' . $path, 1);
+    }
+
+    $cwd = ($cwd === NULL) ? getcwd() : $cwd;
+    $basedirQuoted = preg_quote($cwd, ';');
+    $exportedAbs = var_export($path, 1);
+    $exportedRel = preg_replace(";^([\"'])($basedirQuoted);", '$baseDir . \1', $exportedAbs);
+    return $exportedRel;
   }
 
 }
