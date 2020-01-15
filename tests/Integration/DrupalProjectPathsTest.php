@@ -30,8 +30,8 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTe
         'webmozart/path-util' => '^2.3',
         'zaporylie/composer-drupal-optimizations' => '^1.0',
         'civicrm/civicrm-asset-plugin' => '@dev',
-        'civicrm/civicrm-core' => 'dev-master-composer-all-the-things',
-        'civicrm/civicrm-packages' => 'dev-master',
+        'civicrm/civicrm-core' => '@stable',
+        'civicrm/civicrm-packages' => '@stable',
       ],
       'minimum-stability' => 'dev',
       'extra' => [

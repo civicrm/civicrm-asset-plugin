@@ -11,8 +11,8 @@ class LifecycleTest extends IntegrationTestCase {
       'name' => 'test/lifecycle-test',
       'require' => [
         'civicrm/civicrm-asset-plugin' => '@dev',
-        'civicrm/civicrm-core' => 'dev-master-composer-all-the-things',
-        'civicrm/civicrm-packages' => 'dev-master',
+        'civicrm/civicrm-core' => '@stable',
+        'civicrm/civicrm-packages' => '@stable',
       ],
       'minimum-stability' => 'dev',
       'extra' => [

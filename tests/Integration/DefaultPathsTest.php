@@ -10,8 +10,8 @@ class DefaultPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase
       'name' => 'test/default-paths',
       'require' => [
         'civicrm/civicrm-asset-plugin' => '@dev',
-        'civicrm/civicrm-core' => 'dev-master-composer-all-the-things',
-        'civicrm/civicrm-packages' => 'dev-master',
+        'civicrm/civicrm-core' => '@stable',
+        'civicrm/civicrm-packages' => '@stable',
         'civipkg/org.civicrm.api4' => '4.4.3',
       ],
       'minimum-stability' => 'dev',

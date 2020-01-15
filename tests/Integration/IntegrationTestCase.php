@@ -37,19 +37,6 @@ class IntegrationTestCase extends \PHPUnit\Framework\TestCase {
             ],
           ],
         ],
-
-        // FIXME: Remove when published properly
-        "extrafiles" => [
-          "type" => "vcs",
-          "url" => "https://github.com/totten/ComposerExtraFiles.git",
-        ],
-
-        // FIXME: Remove when dev-master has composer.json updates
-        "civicrm-core" => [
-          "type" => "vcs",
-          "url" => "https://github.com/totten/civicrm-core.git",
-          // "url" => "/Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm",
-        ],
       ],
     ];
   }
