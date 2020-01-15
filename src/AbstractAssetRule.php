@@ -149,18 +149,21 @@ abstract class AbstractAssetRule implements AssetRuleInterface {
   }
 
   public function createAssetMap(Publisher $publisher, IOInterface $io) {
+    $noSlash = function($str) {
+      return rtrim($str, '/' . DIRECTORY_SEPARATOR);
+    };
     return sprintf("\$GLOBALS['civicrm_asset_map'][%s][%s] = %s;\n",
         var_export($this->getPackage()->getName(), 1),
         var_export('src', 1),
-        $this->exportPath($this->srcPath))
+        $this->exportPath($noSlash($this->srcPath)))
       . sprintf("\$GLOBALS['civicrm_asset_map'][%s][%s] = %s;\n",
         var_export($this->getPackage()->getName(), 1),
         var_export('dest', 1),
-        $this->exportPath($this->getLocalPath($publisher)))
+        $this->exportPath($noSlash($this->getLocalPath($publisher))))
       . sprintf("\$GLOBALS['civicrm_asset_map'][%s][%s] = %s;\n",
         var_export($this->getPackage()->getName(), 1),
         var_export('url', 1),
-        var_export($this->getWebPath($publisher), 1));
+        var_export($noSlash($this->getWebPath($publisher)), 1));
   }
 
   /**

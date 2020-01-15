@@ -75,10 +75,10 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTe
 
     // The JS/CSS assets are sync'd to web dir, but the $civicrm_paths should still autoload PHP from the src folder.
     $expectPaths = [];
-    $expectPaths['civicrm.root']['path'] = realpath(self::getTestDir()) . '/vendor/civicrm/civicrm-core';
-    $expectPaths['civicrm.root']['url'] = '/libraries/civicrm/core';
-    $expectPaths['civicrm.packages']['path'] = realpath(self::getTestDir()) . '/vendor/civicrm/civicrm-packages';
-    $expectPaths['civicrm.packages']['url'] = '/libraries/civicrm/packages';
+    $expectPaths['civicrm.root']['path'] = realpath(self::getTestDir()) . '/vendor/civicrm/civicrm-core/';
+    $expectPaths['civicrm.root']['url'] = '/libraries/civicrm/core/';
+    $expectPaths['civicrm.packages']['path'] = realpath(self::getTestDir()) . '/vendor/civicrm/civicrm-packages/';
+    $expectPaths['civicrm.packages']['url'] = '/libraries/civicrm/packages/';
     // FIXME url checks
 
     $count = 0;

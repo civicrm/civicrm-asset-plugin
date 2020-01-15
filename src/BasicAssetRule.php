@@ -29,16 +29,20 @@ class BasicAssetRule extends AbstractAssetRule {
   public function createAssetMap(Publisher $publisher, IOInterface $io) {
     // The `$civicrm_path['civicrm.packages'] should point to the original folder b/c PHP files aren't mapped
 
+    $withSlash = function($str) {
+      return rtrim($str, '/' . DIRECTORY_SEPARATOR) . '/';
+    };
+
     return parent::createAssetMap($publisher, $io)
     . sprintf("\$civicrm_paths[%s][%s] = %s;\n",
       var_export($this->pathVar, 1),
       var_export('path', 1),
-      $this->exportPath($this->srcPath))
+      $this->exportPath($withSlash($this->srcPath)))
     . sprintf("\$civicrm_paths[%s][%s] = %s;\n",
       var_export($this->pathVar, 1),
       var_export('url', 1),
       // Common default: Relative to web root
-      var_export($this->getWebPath($publisher), 1));
+      var_export($withSlash($this->getWebPath($publisher)), 1));
   }
 
 }
