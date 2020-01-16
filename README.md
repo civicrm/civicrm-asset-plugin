@@ -126,6 +126,21 @@ defaults are calculated based on other aspects of the project.
 }
 ```
 
+## Generated variables
+
+To allow CiviCRM to locate assets, this plugin outputs a set of global
+variables.  At runtime, the variables will be loaded via
+`vendor/composer/autoload.php`.
+
+The variables include:
+
+* `$civicrm_setting`: Defines certain path/URL-related settings such as `userFrameworkResourceURL`.
+* `$civicrm_paths`: Defines the paths and URLs for `[civicrm.core]` and `[civicrm.packages]`.
+* `$civicrm_asset_map': For each composer package with sync'd assets, this identifies:
+    * `src`: Local path where assets are read from
+    * `dest`: Local path where assets are sync'd to
+    * `url`: Configured URL for the `dest`
+
 ## Automated Tests
 
 The `tests/` folder includes integration tests written with PHPUnit.  Each
