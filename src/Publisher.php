@@ -14,6 +14,12 @@ use Composer\Package\PackageInterface;
 class Publisher {
 
   /**
+   * The location within our asset tree for the core resources.
+   * Ex: $civicrmCss = '{extra.civicrm-asset.url}/{core_subdir}/css/civicrm.css'
+   */
+  const CORE_SUBDIR = 'core';
+
+  /**
    * @var \Composer\Composer
    */
   protected $composer;
@@ -78,11 +84,20 @@ class Publisher {
     $file = $vendorPath . "/composer/autoload_civicrm_asset.php";
 
     $snippets = ["<?php\n"];
-    $snippets[] = "global \$civicrm_paths;\n";
+    $snippets[] = "global \$civicrm_paths, \$civicrm_setting;\n";
     $snippets[] = "\$vendorDir = dirname(dirname(__FILE__));\n";
     $snippets[] = "\$baseDir = dirname(\$vendorDir);\n";
     $snippets[] = "\$civicrm_paths['civicrm.vendor']['path'] = \$vendorDir;\n";
-    foreach ($this->createAllAssetRules() as $assetRule) {
+
+    $ufrBase = preg_match(';^https?:;', $this->getWebPath())
+      ? $this->getWebPath()
+      : '[cms.root]' . parse_url($this->getWebPath(), PHP_URL_PATH);
+    $snippets[] = sprintf("\$civicrm_setting['domain']['userFrameworkResourceURL'] = %s;\n",
+      var_export($ufrBase . '/' . self::CORE_SUBDIR, 1));
+
+    $assetRules = $this->createAllAssetRules();
+    foreach ($assetRules as $assetRule) {
+      /** @var AssetRuleInterface $assetRule */
       $snippets[] = $assetRule->createAssetMap($this, $this->io);
     }
 
@@ -169,7 +184,7 @@ class Publisher {
 
     switch ($package->getName()) {
       case 'civicrm/civicrm-core':
-        return new BasicAssetRule($package, $installPath, 'core', 'civicrm.root');
+        return new BasicAssetRule($package, $installPath, self::CORE_SUBDIR, 'civicrm.root');
 
       case 'civicrm/civicrm-packages':
         return new BasicAssetRule($package, $installPath, 'packages', 'civicrm.packages');
