@@ -100,26 +100,27 @@ options:
 }
 ```
 
-If you do not set these explicitly, then some defaults come into play. The
-defaults are calculated based on other aspects of the project.
+If you do not set these explicitly, then some defaults come into play.
+
+The defaults are tuned for a few different use-cases.
 
 ```js
-// Style: `drupal-composer/drupal-project`
-// Trigger: The `installer-paths` has a `drupal-library` or `drupal-core` mapping which uses `web/`
+// Use-Case: `drupal-composer/drupal-project`
+// If the `installer-paths` has a `drupal-library` or `drupal-core` mapping which uses `web/`, then default to:
 {
   "path": "web/libraries/civicrm",
   "url": "/libraries/civicrm"
 }
 
-// Style: Drupal 8 Tarball / Drush Dl
-// Trigger: The `installer-paths` has a `drupal-library` or `drupal-core` mapping which does NOT use `web/`
+// Use-Case: Drupal 8 Tarball / Drush Dl
+// If the `installer-paths` has a `drupal-library` or `drupal-core` mapping which does NOT use `web/`, then default to:
 {
   "path": "libraries/civicrm",
   "url": "/libraries/civicrm"
 }
 
-// Style: Other
-// Trigger: No better default detected
+// Use-Case: Other/Unknown
+// If no other defaults apply, then the defaults are:
 {
   "path": "civicrm-assets"
   "url": "/civicrm-assets"
@@ -128,15 +129,13 @@ defaults are calculated based on other aspects of the project.
 
 ## Generated variables
 
-CiviCRM sometimes needs information about how to load assets/files provided by
+CiviCRM needs some information about how to load assets/files provided by
 `composer` packages (`civicrm/civicrm-core`, `civicrm/civicrm-packages`, and any extensions).
-This plugin generates a map and puts it into a few global variables.
-
-The variables include:
+This plugin generates a map and puts it into a few global variables:
 
 * `$civicrm_setting`: Defines certain path/URL-related settings such as `userFrameworkResourceURL`.
 * `$civicrm_paths`: Defines the paths and URLs for `[civicrm.core]` and `[civicrm.packages]`.
-* `$civicrm_asset_map': For each composer package with sync'd assets, this identifies:
+* `$civicrm_asset_map`: For each composer package with sync'd assets, this identifies:
     * `src`: Local path where assets are read from
     * `dest`: Local path where assets are sync'd to
     * `url`: Configured URL for the `dest`
