@@ -130,9 +130,7 @@ defaults are calculated based on other aspects of the project.
 
 CiviCRM sometimes needs information about how to load assets/files provided by
 `composer` packages (`civicrm/civicrm-core`, `civicrm/civicrm-packages`, and any extensions).
-This plugin generates a map of assets and puts the list into a few global variables.
-
-At runtime, the global variables will be loaded automatically (via `vendor/composer/autoload.php`).
+This plugin generates a map and puts it into a few global variables.
 
 The variables include:
 
@@ -142,6 +140,8 @@ The variables include:
     * `src`: Local path where assets are read from
     * `dest`: Local path where assets are sync'd to
     * `url`: Configured URL for the `dest`
+
+At runtime, the global variables will be loaded automatically (via `vendor/composer/autoload.php`).
 
 ## Automated Tests
 
