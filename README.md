@@ -128,9 +128,11 @@ defaults are calculated based on other aspects of the project.
 
 ## Generated variables
 
-To allow CiviCRM to locate assets, this plugin outputs a set of global
-variables.  At runtime, the variables will be loaded via
-`vendor/composer/autoload.php`.
+CiviCRM sometimes needs information about how to load assets/files provided by
+`composer` packages (`civicrm/civicrm-core`, `civicrm/civicrm-packages`, and any extensions).
+This plugin generates a map of assets and puts the list into a few global variables.
+
+At runtime, the global variables will be loaded automatically (via `vendor/composer/autoload.php`).
 
 The variables include:
 
