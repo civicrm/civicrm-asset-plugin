@@ -203,6 +203,8 @@ class Publisher {
   }
 
   /**
+   * Scan the list of installed packages and assemble the asset-publication rules.
+   *
    * @return AssetRuleInterface[]
    */
   protected function createAllAssetRules() {
@@ -218,8 +220,11 @@ class Publisher {
   }
 
   /**
-   * @param $extra
-   * @param $defaults
+   * Combine the project's "extra" configuration with the
+   * plugin's "default" configuration.
+   *
+   * @param array $extra
+   * @param array $defaults
    * @return array
    */
   protected function mergeConfigExtra($extra, $defaults) {
