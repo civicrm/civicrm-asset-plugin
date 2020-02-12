@@ -1,45 +1,77 @@
-# civicrm-asset-plugin
+# civicrm/civicrm-asset-plugin
 
-The `civicrm-asset-plugin` is a [composer](https://getcomposer.org/) plugin
-to support project structures, such as the common Drupal 8 templates, in
-which PHP-code (`*.php`) and web-assets (`*.js`, `*.css`, etc) are split
-apart.  It's job is it identify web-assets related to CiviCRM and copy them
-to another folder.
+The `civicrm/civicrm-asset-plugin` is a [composer](https://getcomposer.org/)
+plugin to support project structures (such as the common Drupal 8 templates)
+in which PHP-code (`*.php`) and web-assets (`*.js`, `*.css`, etc) are split
+apart.  Its job is to identify web-assets related to CiviCRM, copy them to
+another folder, and configure CiviCRM to use that folder.
 
-It supports assets from:
+It locates assets from:
 
 * `civicrm-core`
 * `civicrm-packages`
-* Any extension containing an `info.xml` file
+* Any `composer` package with a CiviCRM extension (`info.xml`)
+
+## Quick start
+
+```bash
+composer require civicrm/civicrm-asset-plugin:~1.0
+```
+
+If your web-site matches a well-known project template (e.g.  `drupal/recommended-project` or
+`drupal/legacy-project` in D8.8+), then the plugin will autoconfigure itself.
+
+For a novel or unrecognized project structure, you should explicitly configure the sync mechanism.
+Edit `composer.json` and describe where assets should go, e.g.:
+
+```js
+"extra": {
+  "civicrm-asset": {
+    "path": "web/libraries/civicrm",
+    "url": "/libraries/civicrm"
+  }
+}
+```
+
+After editing the options, republish with:
+
+```bash
+composer civicrm:publish
+```
+
+The remainder of this document presents a fuller explanation of the
+mechanics and options.
 
 ## Example
 
 Suppose you have the following source tree:
 
 ```
+web/
+  index.php
 vendor/
   civicrm/
-    civicrm-core
-    civicrm-packages
+    civicrm-core/
+    civicrm-packages/
   civipkg/
-    org.civicrm.api4
-    org.civicrm.flexmailer
-    org.civicrm.shoreditch
-    uk.co.vedaconsulting.mosaico
+    org.civicrm.api4/
+    org.civicrm.flexmailer/
+    org.civicrm.shoreditch/
+    uk.co.vedaconsulting.mosaico/
 ```
 
-By default, the assets from these folders would be published to:
+The plugin will copy Civi-related assets from `vendor/` to `web/`.
 
 ```
 web/
   libraries/
     civicrm/
-      core
-      packages
-      org.civicrm.api4
-      org.civicrm.flexmailer
-      org.civicrm.shoreditch
-      uk.co.vedaconsulting.mosaico
+      core/
+      packages/
+      org.civicrm.api4/
+      org.civicrm.flexmailer/
+      org.civicrm.shoreditch/
+      uk.co.vedaconsulting.mosaico/
 ```
 
 ## Options
@@ -51,10 +83,10 @@ options:
 "extra": {
   "civicrm-asset": {
     // Local file path of the public/web-readable folder
-    "path": "web/libraries/civicrm"
+    "path": "web/libraries/civicrm",
 
     // Public URL of the public/web-readable folder
-    "url": "/libraries/civicrm"
+    "url": "/libraries/civicrm",
 
     // How to put the file in the public/web-readable folder?
     //
@@ -106,30 +138,34 @@ The defaults are tuned for a few different use-cases.
 
 ```js
 // Use-Case: `drupal-composer/drupal-project`
-// If the `installer-paths` has a `drupal-library` or `drupal-core` mapping which uses `web/`, then default to:
+// Use-Case: `drupal/recommended-project`
+// Rule: If the `installer-paths` has a `drupal-library` or `drupal-core` mapping which uses `web/`, then default to:
 {
   "path": "web/libraries/civicrm",
   "url": "/libraries/civicrm"
 }
 
 // Use-Case: Drupal 8 Tarball / Drush Dl
-// If the `installer-paths` has a `drupal-library` or `drupal-core` mapping which does NOT use `web/`, then default to:
+// Use-Case: `drupal/legacy-project`
+// Rule: If the `installer-paths` has a `drupal-library` or `drupal-core` mapping which does NOT use `web/`, then default to:
 {
   "path": "libraries/civicrm",
   "url": "/libraries/civicrm"
 }
 
 // Use-Case: Other/Unknown
-// If no other defaults apply, then the defaults are:
+// Rule: If no other defaults apply, then the defaults are:
 {
   "path": "civicrm-assets"
   "url": "/civicrm-assets"
 }
 ```
 
-## Generated variables
+The full heuristics are enumerated in `src/PublisherDefaults.php`.
 
-CiviCRM needs some information about how to load assets/files provided by
+## Generated asset map and global variables
+
+At runtime, CiviCRM needs some information about how to load assets/files provided by
 `composer` packages (`civicrm/civicrm-core`, `civicrm/civicrm-packages`, and any extensions).
 This plugin generates a map and puts it into a few global variables:
 
