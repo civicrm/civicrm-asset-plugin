@@ -1,28 +1,35 @@
 # civicrm/civicrm-asset-plugin
 
 The `civicrm/civicrm-asset-plugin` is a [composer](https://getcomposer.org/)
-plugin to support project structures (such as the common Drupal 8 templates)
-in which PHP-code (`*.php`) and web-assets (`*.js`, `*.css`, etc) are split
-apart.  Its job is to identify web-assets related to CiviCRM, copy them to
-another folder, and configure CiviCRM to use that folder.
+plugin to support projects in which PHP files (`*.php`) and web-assets
+(`*.js`, `*.css`, etc) must be split apart.  Its job is to identify
+web-assets related to CiviCRM, copy them to another folder, and configure
+CiviCRM to use that folder.
 
-It locates assets from:
+It reads assets from these composer packages:
 
-* `civicrm-core`
-* `civicrm-packages`
-* Any `composer` package with a CiviCRM extension (`info.xml`)
+* `civicrm/civicrm-core`
+* `civicrm/civicrm-packages`
+* Any `composer` package with a CiviCRM extension (`info.xml`) in the root
+
+Assets are synchronized to a public folder.  If your web-site matches a
+well-known project template (e.g.  `drupal/recommended-project` or
+`drupal/legacy-project` in D8.8+), then the plugin will detect the output folder
+automatically. Otherwise, it can be configured.
 
 ## Quick start
+
+Simply add the package `civicrm/civicrm-asset-plugin` to your project:
 
 ```bash
 composer require civicrm/civicrm-asset-plugin:~1.0
 ```
 
-If your web-site matches a well-known project template (e.g.  `drupal/recommended-project` or
-`drupal/legacy-project` in D8.8+), then the plugin will autoconfigure itself.
+For a well-known project template, nothing more is required.
 
-For a novel or unrecognized project structure, you should explicitly configure the sync mechanism.
-Edit `composer.json` and describe where assets should go, e.g.:
+For a novel or unrecognized project structure, you should explicitly
+configure the sync mechanism.  Edit `composer.json` and describe where
+assets should go, e.g.:
 
 ```js
 "extra": {
