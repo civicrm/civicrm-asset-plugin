@@ -222,7 +222,7 @@ abstract class AbstractAssetRule implements AssetRuleInterface {
   protected function exportPath($path, $cwd = NULL) {
     // This should work for both unix and windows. (Except an odd edge-case: Unix systems with relative paths that have a ":")
     $len = strlen($path);
-    $isAbsolute = ($len > 0 && $path{0} === '/') || ($len > 1 && $path{1} === ':');
+    $isAbsolute = ($len > 0 && $path[0] === '/') || ($len > 1 && $path[1] === ':');
     if (!$isAbsolute) {
       return '$baseDir . ' . var_export('/' . $path, 1);
     }
