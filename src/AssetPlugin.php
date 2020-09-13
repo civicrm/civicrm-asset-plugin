@@ -38,6 +38,14 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
     $this->publisher = new Publisher($composer, $io);
   }
 
+  public function deactivate(Composer $composer, IOInterface $io) {
+    // NOTE: This method is only valid on composer v2.
+  }
+
+  public function uninstall(Composer $composer, IOInterface $io) {
+    // NOTE: This method is only valid on composer v2.
+  }
+
   /**
    * {@inheritdoc}
    */
