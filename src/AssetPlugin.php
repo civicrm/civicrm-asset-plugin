@@ -31,15 +31,31 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
   protected $publisher;
 
   /**
+   * List of packages that need to be sync'd.
+   *
+   * We only sync a package if there's been a concrete installation/update event,
+   * but we need to defer until late in the installation process to ensure
+   * that the assets are fully materialized (e.g. after patches and compilation tasks).
+   *
+   * @var string[]
+   *   Ex: ['vendor1/package1', 'vendor2/package2']
+   */
+  protected $queue;
+
+  /**
    * {@inheritdoc}
    */
   public function activate(Composer $composer, IOInterface $io) {
     $this->io = $io;
     $this->publisher = new Publisher($composer, $io);
+    $this->queue = [];
   }
 
   public function deactivate(Composer $composer, IOInterface $io) {
     // NOTE: This method is only valid on composer v2.
+    unset($this->io);
+    unset($this->publisher);
+    unset($this->queue);
   }
 
   public function uninstall(Composer $composer, IOInterface $io) {
@@ -55,6 +71,8 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
       PackageEvents::POST_PACKAGE_UPDATE => ['onPackageUpdate', -100],
       PackageEvents::PRE_PACKAGE_UNINSTALL => ['onPackageUninstall'],
       ScriptEvents::PRE_AUTOLOAD_DUMP => ['onAutoloadDump', -100],
+      ScriptEvents::POST_INSTALL_CMD => ['runQueue', -100],
+      ScriptEvents::POST_UPDATE_CMD => ['runQueue', -100],
     ];
   }
 
@@ -64,7 +82,7 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
    */
   public function onPackageInstall(PackageEvent $event) {
     $package = $event->getOperation()->getPackage();
-    $this->publisher->publishAssets($package);
+    $this->queue[] = $package->getName();
   }
 
   /**
@@ -73,7 +91,7 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
    */
   public function onPackageUpdate(PackageEvent $event) {
     $package = $event->getOperation()->getTargetPackage();
-    $this->publisher->publishAssets($package);
+    $this->queue[] = $package->getName();
   }
 
   /**
@@ -96,6 +114,22 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
     $autoloads = $rootPackage->getAutoload();
     $autoloads['files'][] = $file;
     $rootPackage->setAutoload($autoloads);
+  }
+
+  public function runQueue(Event $event) {
+    if (empty($this->queue)) {
+      return;
+    }
+
+    $this->io->write("<info>Sync CiviCRM assets</info>");
+    $queue = $this->queue;
+    $this->queue = [];
+
+    $localRepo = $event->getComposer()->getRepositoryManager()->getLocalRepository();
+
+    foreach ($queue as $packageName) {
+      $this->publisher->publishAssets($localRepo->findPackage($packageName, '*'));
+    }
   }
 
   /**
