@@ -50,7 +50,7 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTe
   public static function setUpBeforeClass() {
     parent::setUpBeforeClass();
     self::initTestProject(static::getComposerJson());
-    PH::runOk('composer install');
+    PH::runOk('COMPOSER_MEMORY_LIMIT=-1 composer install');
     // PH::runOk('composer civicrm:publish');
   }
 
