@@ -118,7 +118,7 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
    * @param \Composer\Script\Event $event
    */
   public function onAutoloadDump(Event $event) {
-    if ($this->checkConflicted()) {
+    if ($this->checkConflicted() || $this->checkRemoved()) {
       return;
     }
     $this->io->write("  - <info>CiviCRM asset map</info>");
@@ -131,7 +131,7 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
   }
 
   public function runQueue(Event $event) {
-    if ($this->checkConflicted()) {
+    if ($this->checkConflicted() || $this->checkRemoved()) {
       return;
     }
 
@@ -191,6 +191,35 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
     }
 
     return $this->conflicted;
+  }
+
+  /**
+   * In composer v1, the plugin class is loaded and activated before removal.
+   * This leaves us in a dangling state where uninstallation may raise errors.
+   *
+   * @return bool
+   *   TRUE if it appears that this has been removed.
+   */
+  protected function checkRemoved() {
+    try {
+      $pkg = $this->composer->getRepositoryManager()->getLocalRepository()->findPackage('civicrm/civicrm-asset-plugin', '*');
+    }
+    catch (\Exception $e) {
+      return TRUE;
+    }
+
+    if ($pkg === NULL) {
+      return TRUE;
+    }
+
+    try {
+      $path = $this->composer->getInstallationManager()->getInstallPath($pkg);
+    }
+    catch (\Exception $e) {
+      return TRUE;
+    }
+
+    return !is_readable($path);
   }
 
 }
