@@ -21,6 +21,11 @@ use Composer\Script\ScriptEvents;
 class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable {
 
   /**
+   * @var \Composer\Composer
+   */
+  protected $composer;
+
+  /**
    * @var \Composer\IO\IOInterface
    */
   protected $io;
@@ -43,9 +48,15 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
   protected $queue;
 
   /**
+   * @var bool|null
+   */
+  protected $conflicted = NULL;
+
+  /**
    * {@inheritdoc}
    */
   public function activate(Composer $composer, IOInterface $io) {
+    $this->composer = $composer;
     $this->io = $io;
     $this->publisher = new Publisher($composer, $io);
     $this->queue = [];
@@ -107,6 +118,9 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
    * @param \Composer\Script\Event $event
    */
   public function onAutoloadDump(Event $event) {
+    if ($this->checkConflicted() || $this->checkRemoved()) {
+      return;
+    }
     $this->io->write("  - <info>CiviCRM asset map</info>");
     $file = $this->publisher->createAssetMap();
 
@@ -117,6 +131,10 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
   }
 
   public function runQueue(Event $event) {
+    if ($this->checkConflicted() || $this->checkRemoved()) {
+      return;
+    }
+
     if (empty($this->queue)) {
       return;
     }
@@ -139,6 +157,69 @@ class AssetPlugin implements PluginInterface, EventSubscriberInterface, Capable 
     return [
       'Composer\Plugin\Capability\CommandProvider' => CommandProvider::class,
     ];
+  }
+
+  /**
+   * Determine if there is a conflict that prevents us from syncing assets.
+   *
+   * On the first invocation, this will assess the conflict and print an appropriate warning.
+   *
+   * Note that it is preferable to run this late (eg `POST_INSTALL_CMD`) rather
+   * than early (eg `PRE_PACKAGE_INSTALL`) so that we have a clear view is
+   * (or is not) installed.
+   *
+   * @return bool
+   *   TRUE if there is a conflict
+   */
+  protected function checkConflicted() {
+    if ($this->conflicted === NULL) {
+      $this->conflicted = NULL !== $this->composer->getRepositoryManager()->getLocalRepository()->findPackage('roundearth/civicrm-composer-plugin', '*');
+      if ($this->conflicted) {
+        // We are likely to get in this situation if (1) a site originally installed with an early
+        // Civi-D8 tutorial/template using RE/CCP and (2) later upgraded to Civi 5.31+ which bundles C/CAP.
+        $url = 'https://civicrm.stackexchange.com/q/35921';
+        $this->io->write("");
+        $this->io->write("<warning>WARNING</warning>: <comment>civicrm/civicrm-asset-plugin</comment> skipped due to conflict with <comment>roundearth/civicrm-composer-plugin</comment>.");
+        $this->io->write("");
+        $this->io->write("Both plugins are installed. They overlap insofar as both publish assets " .
+          "for CiviCRM-D8, but they are not interoperable. To ensure consistency, " .
+          "<comment>civicrm/civicrm-asset-plugin</comment> will defer to " .
+          "<comment>roundearth/civicrm-composer-plugin</comment>. If you prefer to migrate, see: " .
+          "<comment>$url</comment>\n"
+        );
+      }
+    }
+
+    return $this->conflicted;
+  }
+
+  /**
+   * In composer v1, the plugin class is loaded and activated before removal.
+   * This leaves us in a dangling state where uninstallation may raise errors.
+   *
+   * @return bool
+   *   TRUE if it appears that this has been removed.
+   */
+  protected function checkRemoved() {
+    try {
+      $pkg = $this->composer->getRepositoryManager()->getLocalRepository()->findPackage('civicrm/civicrm-asset-plugin', '*');
+    }
+    catch (\Exception $e) {
+      return TRUE;
+    }
+
+    if ($pkg === NULL) {
+      return TRUE;
+    }
+
+    try {
+      $path = $this->composer->getInstallationManager()->getInstallPath($pkg);
+    }
+    catch (\Exception $e) {
+      return TRUE;
+    }
+
+    return !is_readable($path);
   }
 
 }
