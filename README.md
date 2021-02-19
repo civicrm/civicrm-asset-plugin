@@ -1,0 +1,1 @@
+This is a read-only mirror. The canonical repository is https://lab.civicrm.org/dev/civicrm-asset-plugin.
