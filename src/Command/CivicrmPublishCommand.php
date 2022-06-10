@@ -41,6 +41,7 @@ class CivicrmPublishCommand extends \Composer\Command\BaseCommand {
 
     $output->writeln("<info>Generating CiviCRM asset map</info>");
     $p->createAssetMap();
+    return 0;
   }
 
 }
