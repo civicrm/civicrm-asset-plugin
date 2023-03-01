@@ -1,12 +1,13 @@
 <?php
 namespace Civi\AssetPlugin\Integration;
 
+use Civi\AssetPlugin\Util\ComposerJsonMerge;
 use ProcessHelper\ProcessHelper as PH;
 
 class CustomPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase {
 
-  public static function getComposerJson() {
-    return parent::getComposerJson() + [
+  public static function getComposerJson(): array {
+    return ComposerJsonMerge::merge(parent::getComposerJson(), [
       'name' => 'test/custom-paths',
       'require' => [
         'civicrm/civicrm-asset-plugin' => '@dev',
@@ -22,7 +23,7 @@ class CustomPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase 
           // FIXME: Maybe custom 'files' listing as well?
         ],
       ],
-    ];
+    ]);
   }
 
   public static function setUpBeforeClass(): void {

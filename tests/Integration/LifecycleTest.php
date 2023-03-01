@@ -2,12 +2,13 @@
 
 namespace Civi\AssetPlugin\Integration;
 
+use Civi\AssetPlugin\Util\ComposerJsonMerge;
 use ProcessHelper\ProcessHelper as PH;
 
 class LifecycleTest extends IntegrationTestCase {
 
-  public static function getComposerJson() {
-    return parent::getComposerJson() + [
+  public static function getComposerJson(): array {
+    return ComposerJsonMerge::merge(parent::getComposerJson(), [
       'name' => 'test/lifecycle-test',
       'require' => [
         'civicrm/civicrm-asset-plugin' => '@dev',
@@ -23,7 +24,7 @@ class LifecycleTest extends IntegrationTestCase {
           // FIXME: Maybe custom 'files' listing as well?
         ],
       ],
-    ];
+    ]);
   }
 
   public static function setUpBeforeClass(): void {

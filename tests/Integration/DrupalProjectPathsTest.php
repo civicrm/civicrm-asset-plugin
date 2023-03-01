@@ -1,6 +1,7 @@
 <?php
 namespace Civi\AssetPlugin\Integration;
 
+use Civi\AssetPlugin\Util\ComposerJsonMerge;
 use ProcessHelper\ProcessHelper as PH;
 
 /**
@@ -15,8 +16,8 @@ use ProcessHelper\ProcessHelper as PH;
  */
 class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase {
 
-  public static function getComposerJson() {
-    return parent::getComposerJson() + [
+  public static function getComposerJson(): array {
+    return ComposerJsonMerge::merge(parent::getComposerJson(), [
       'name' => 'test/drupal-paths',
       'require' => [
         'composer/installers' => '^1.2',
@@ -44,7 +45,7 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTe
           'drush/Commands/{$name}' => ['type:drupal-drush'],
         ],
       ],
-    ];
+    ]);
   }
 
   public static function setUpBeforeClass(): void {

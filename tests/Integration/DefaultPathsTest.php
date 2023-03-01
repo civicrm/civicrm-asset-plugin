@@ -1,12 +1,13 @@
 <?php
 namespace Civi\AssetPlugin\Integration;
 
+use Civi\AssetPlugin\Util\ComposerJsonMerge;
 use ProcessHelper\ProcessHelper as PH;
 
 class DefaultPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase {
 
-  public static function getComposerJson() {
-    return parent::getComposerJson() + [
+  public static function getComposerJson(): array {
+    return ComposerJsonMerge::merge(parent::getComposerJson(), [
       'name' => 'test/default-paths',
       'require' => [
         'civicrm/civicrm-asset-plugin' => '@dev',
@@ -15,7 +16,7 @@ class DefaultPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase
         'civipkg/org.civicrm.api4' => '4.4.3',
       ],
       'minimum-stability' => 'dev',
-    ];
+    ]);
   }
 
   public static function setUpBeforeClass(): void {

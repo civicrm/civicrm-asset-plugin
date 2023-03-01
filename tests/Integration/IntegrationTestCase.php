@@ -5,13 +5,26 @@ use ProcessHelper\ProcessHelper as PH;
 
 class IntegrationTestCase extends \PHPUnit\Framework\TestCase {
 
-  public static function getComposerJson() {
+  public static function getComposerJson(): array {
     return [
       'authors' => [
         [
           'name' => 'Tester McFakus',
           'email' => 'tester@example.org',
         ],
+      ],
+
+      'config' => [
+        'allow-plugins' => [
+          'civicrm/civicrm-asset-plugin' => TRUE,
+          'civicrm/composer-compile-plugin' => TRUE,
+          'civicrm/composer-downloads-plugin' => TRUE,
+          'cweagans/composer-patches' => TRUE,
+        ],
+      ],
+
+      'extra' => [
+        'compile-mode' => 'ALL',
       ],
 
       'repositories' => [
