@@ -41,7 +41,7 @@ class PublisherDefaults {
     $libPath = $this->findPathByType('drupal-library', $installerPaths);
     $corePath = $this->findPathByType('drupal-core', $installerPaths);
     if ($libPath || $corePath) {
-      if (preg_match(';web/;', $libPath) || preg_match(';web/;', $corePath)) {
+      if (preg_match(';web/;', $libPath ?: '') || preg_match(';web/;', $corePath ?: '')) {
         $io->write("<info>[<comment>civicrm-asset-plugin</comment>] Found <comment>drupal/core</comment>. Defaults will be based on <comment>drupal-composer/drupal-project</comment>.</info>", TRUE, IOInterface::VERBOSE);
         $this->defaults['path'] = 'web/libraries/civicrm';
         $this->defaults['url'] = '/libraries/civicrm';
