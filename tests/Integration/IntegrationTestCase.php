@@ -137,7 +137,11 @@ class IntegrationTestCase extends \PHPUnit\Framework\TestCase {
     $this->assertTrue(file_exists($path), "Path ($path) should exist (symlink file)");
     $this->assertTrue(is_link($path), "Path ($path) should be a symlink");
 
-    $linkTgt = readlink($path);
+    // Insanity: The above conditions pass, and shell "readlink" is fine, but the PHP
+    // variant complains: 'readlink(): No such file or directory'. clearstatcache() doesn't help.
+    // $linkTgt = readlink($path);
+    $linkTgt = trim(system("readlink " . escapeshellarg($path)));
+
     $this->assertTrue(is_string($linkTgt));
     $this->assertTrue(is_file(dirname($path) . '/' . $linkTgt), "Path ($path) should be symlinking pointing to a file. Found tgt ($linkTgt)");
   }
@@ -152,7 +156,10 @@ class IntegrationTestCase extends \PHPUnit\Framework\TestCase {
     $this->assertTrue(file_exists($path), "Path ($path) should exist (symlink dir)");
     $this->assertTrue(is_link($path), "Path ($path) should be a symlink");
 
-    $linkTgt = readlink($path);
+    // Insanity: The above conditions pass, and shell "readlink" is fine, but the PHP
+    // variant complains: 'readlink(): No such file or directory'. clearstatcache() doesn't help.
+    // $linkTgt = readlink($path);
+    $linkTgt = trim(system("readlink " . escapeshellarg($path)));
     $this->assertTrue(is_string($linkTgt));
     $this->assertTrue(is_dir(dirname($path) . '/' . $linkTgt), "Path ($path) should be symlinking pointing to a dir. Found tgt ($linkTgt");
   }
