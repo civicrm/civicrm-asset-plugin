@@ -5,6 +5,10 @@ namespace Civi\AssetPlugin\Integration;
 use Civi\AssetPlugin\Util\ComposerJsonMerge;
 use ProcessHelper\ProcessHelper as PH;
 
+/**
+ * @group composer-1
+ * @group composer-2
+ */
 class LifecycleTest extends IntegrationTestCase {
 
   public static function getComposerJson(): array {

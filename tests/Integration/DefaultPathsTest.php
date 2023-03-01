@@ -4,6 +4,10 @@ namespace Civi\AssetPlugin\Integration;
 use Civi\AssetPlugin\Util\ComposerJsonMerge;
 use ProcessHelper\ProcessHelper as PH;
 
+/**
+ * @group composer-1
+ * @group composer-2
+ */
 class DefaultPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase {
 
   public static function getComposerJson(): array {
