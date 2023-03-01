@@ -23,7 +23,8 @@ class Drupal8ProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationT
       'name' => 'test/drupal-paths',
       'require' => [
         'composer/installers' => '^1.2',
-        'cweagans/composer-patches' => '^1.6.5',
+        // Circa Feb 2023, composer-patches@1.x-head failing on composer-1.10.26. Lock in.
+        'cweagans/composer-patches' => '~1.7.0',
         'drupal-composer/drupal-scaffold' => '^2.5',
         'drupal/console' => '^1.0.2',
         'drupal/core' => '^8.7.0',

@@ -18,6 +18,8 @@ class CustomPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase 
         'civicrm/civicrm-core' => '@stable',
         'civicrm/civicrm-packages' => '@stable',
         'civipkg/org.civicrm.api4' => '4.4.3',
+        // Circa Feb 2023, composer-patches@1.x-head failing on composer-1.10.26. Lock in.
+        'cweagans/composer-patches' => '~1.7.0',
       ],
       'minimum-stability' => 'dev',
       'extra' => [

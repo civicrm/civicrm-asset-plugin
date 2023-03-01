@@ -18,6 +18,8 @@ class LifecycleTest extends IntegrationTestCase {
         'civicrm/civicrm-asset-plugin' => '@dev',
         'civicrm/civicrm-core' => '@stable',
         'civicrm/civicrm-packages' => '@stable',
+        // Circa Feb 2023, composer-patches@1.x-head failing on composer-1.10.26. Lock in.
+        'cweagans/composer-patches' => '~1.7.0',
       ],
       'minimum-stability' => 'dev',
       'extra' => [
