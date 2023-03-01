@@ -8,18 +8,19 @@ function absdirname() {
 
 SCRIPT_DIR=$(absdirname "$0")
 PROJECT_DIR=$(dirname "$SCRIPT_DIR")
-WORK_DIR="$PROJECT_DIR/build"
-#COMPOSER_VERS=('2.0.14')
+PHP_VER=$(php -r 'echo PHP_VERSION;')
+TOOL_DIR="$PROJECT_DIR/build/tools"
+WORK_DIR="$PROJECT_DIR/build/$PHP_VER"
 COMPOSER_VERS=('1.10.26' '2.0.14' '2.1.14' '2.2.21' '2.5.4')
-PHPUNIT_EXTRA=('--debug')
+PHPUNIT_EXTRA=('--debug' '--stop-on-failure')
 
-mkdir -p "$WORK_DIR" "$WORK_DIR/junit" "$WORK_DIR/tools" "$WORK_DIR/log"
+mkdir -p "$WORK_DIR" "$WORK_DIR/junit" "$TOOL_DIR" "$WORK_DIR/log"
 
 for COMPOSER_VER in ${COMPOSER_VERS[@]} ; do
-  if [ ! -d "$WORK_DIR/tools/composer-$COMPOSER_VER" ]; then
-    mkdir "$WORK_DIR/tools/composer-$COMPOSER_VER"
+  if [ ! -d "$TOOL_DIR/composer-$COMPOSER_VER" ]; then
+    mkdir "$TOOL_DIR/composer-$COMPOSER_VER"
   fi
-  pushd "$WORK_DIR/tools/composer-$COMPOSER_VER" >> /dev/null
+  pushd "$TOOL_DIR/composer-$COMPOSER_VER" >> /dev/null
     if [ ! -f "composer" ]; then
       wget https://github.com/composer/composer/releases/download/$COMPOSER_VER/composer.phar -O composer
       chmod +x composer
@@ -38,14 +39,14 @@ for COMPOSER_VER in ${COMPOSER_VERS[@]} ; do
   echo "# Run tests with composer $COMPOSER_VER"
   case "${COMPOSER_VER::1}" in
     1)
-      env PATH="$WORK_DIR/tools/composer-$COMPOSER_VER:$PATH" phpunit8 \
+      env PATH="$TOOL_DIR/composer-$COMPOSER_VER:$PATH" phpunit8 \
       	--group composer-1 \
       	--log-junit "$WORK_DIR/junit/composer-$COMPOSER_VER.xml" \
 	"${PHPUNIT_EXTRA[@]}" \
 	| tee "$WORK_DIR/log/composer-$COMPOSER_VER.log"
       ;;
     2)
-      env PATH="$WORK_DIR/tools/composer-$COMPOSER_VER:$PATH" phpunit8 \
+      env PATH="$TOOL_DIR/composer-$COMPOSER_VER:$PATH" phpunit8 \
       	--group composer-2 \
       	--log-junit "$WORK_DIR/junit/composer-$COMPOSER_VER.xml" \
 	"${PHPUNIT_EXTRA[@]}"\
@@ -53,6 +54,3 @@ for COMPOSER_VER in ${COMPOSER_VERS[@]} ; do
       ;;
   esac
 done
-
-
-# echo env PATH="$PWD/extern/composer-2.5.4:$PATH" USE_TEST_PROJECT=$HOME/src/myprj DEBUG=2 phpunit8 tests/Integration/DefaultPathsTest.php
