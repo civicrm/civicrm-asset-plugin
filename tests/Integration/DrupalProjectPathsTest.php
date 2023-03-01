@@ -47,7 +47,7 @@ class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTe
     ];
   }
 
-  public static function setUpBeforeClass() {
+  public static function setUpBeforeClass(): void {
     parent::setUpBeforeClass();
     self::initTestProject(static::getComposerJson());
     PH::runOk('COMPOSER_MEMORY_LIMIT=-1 composer install');
