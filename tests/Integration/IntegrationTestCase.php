@@ -19,12 +19,17 @@ class IntegrationTestCase extends \PHPUnit\Framework\TestCase {
           'civicrm/civicrm-asset-plugin' => TRUE,
           'civicrm/composer-compile-plugin' => TRUE,
           'civicrm/composer-downloads-plugin' => TRUE,
+          "composer/installers" => TRUE,
           'cweagans/composer-patches' => TRUE,
+          "drupal/core-composer-scaffold" => TRUE,
+          "drupal/core-project-message" => TRUE,
+          "dealerdirect/phpcodesniffer-composer-installer" => TRUE,
         ],
       ],
 
       'extra' => [
         'compile-mode' => 'ALL',
+        'enable-patching' => 'true',
       ],
 
       'repositories' => [

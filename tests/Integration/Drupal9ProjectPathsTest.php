@@ -5,7 +5,7 @@ use Civi\AssetPlugin\Util\ComposerJsonMerge;
 use ProcessHelper\ProcessHelper as PH;
 
 /**
- * Class DrupalProjectPathsTest
+ * Class Drupal9ProjectPathsTest
  * @package Civi\AssetPlugin\Integration
  *
  * In this case, we follow the default project structure from
@@ -13,36 +13,38 @@ use ProcessHelper\ProcessHelper as PH;
  * as requirements.
  *
  * The default paths are determined automatically from the Drupal config.
+ *
+ * @group composer-2
  */
-class DrupalProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase {
+class Drupal9ProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase {
 
   public static function getComposerJson(): array {
     return ComposerJsonMerge::merge(parent::getComposerJson(), [
       'name' => 'test/drupal-paths',
       'require' => [
-        'composer/installers' => '^1.2',
-        'cweagans/composer-patches' => '^1.6.5',
-        'drupal-composer/drupal-scaffold' => '^2.5',
-        'drupal/console' => '^1.0.2',
-        'drupal/core' => '^8.7.0',
-        'drush/drush' => '^9.0.0',
-        'vlucas/phpdotenv' => '^2.4',
-        'webflo/drupal-finder' => '^1.0.0',
-        'webmozart/path-util' => '^2.3',
-        'zaporylie/composer-drupal-optimizations' => '^1.0',
+        'composer/installers' => '^1.9',
+        "drupal/core-composer-scaffold" => "^9.5",
+        "drupal/core-project-message" => "^9.5",
+        "drupal/core-recommended" => "^9.5",
         'civicrm/civicrm-asset-plugin' => '@dev',
         'civicrm/civicrm-core' => '@stable',
         'civicrm/civicrm-packages' => '@stable',
       ],
       'minimum-stability' => 'dev',
       'extra' => [
+        'drupal-scaffold' => [
+          'locations' => ['web-root' => 'web/'],
+        ],
         'installer-paths' => [
           'web/core' => ['type:drupal-core'],
           'web/libraries/{$name}' => ['type:drupal-library'],
           'web/modules/contrib/{$name}' => ['type:drupal-module'],
           'web/profiles/contrib/{$name}' => ['type:drupal-profile'],
           'web/themes/contrib/{$name}' => ['type:drupal-theme'],
-          'drush/Commands/{$name}' => ['type:drupal-drush'],
+          'drush/Commands/contrib/{$name}' => ['type:drupal-drush'],
+          'web/modules/custom/{$name}' => ['type:drupal-custom-module'],
+          'web/profiles/custom/{$name}' => ['type:drupal-custom-profile'],
+          'web/themes/custom/{$name}' => ['type:drupal-custom-theme'],
         ],
       ],
     ]);
