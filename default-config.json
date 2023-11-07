@@ -18,7 +18,8 @@
             "**.woff2",
             "**.ttf",
             "**.eot",
-            "**.swf"
+            "**.swf",
+            "**.json"
         ],
         "exclude-dir": [
             ".git",
