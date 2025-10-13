@@ -4,6 +4,7 @@ namespace Civi\AssetPlugin\Command;
 
 use Civi\AssetPlugin\Publisher;
 use Composer\Util\Filesystem;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,7 +22,7 @@ class CivicrmPublishCommand extends \Composer\Command\BaseCommand {
       ->addOption('delete', 'D', InputOption::VALUE_NONE, 'Enable broad deletion. This ensures that orphaned files are removed, but it requires more I/O.');
   }
 
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $fileMode = $input->getOption('file-mode');
     if ($fileMode && in_array($fileMode, ['auto', 'copy', 'symlink', 'symdir'])) {
       putenv('CIVICRM_COMPOSER_ASSET=' . $fileMode);
@@ -41,7 +42,7 @@ class CivicrmPublishCommand extends \Composer\Command\BaseCommand {
 
     $output->writeln("<info>Generating CiviCRM asset map</info>");
     $p->createAssetMap();
-    return 0;
+    return Command::SUCCESS;
   }
 
 }
