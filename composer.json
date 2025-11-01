@@ -4,7 +4,7 @@
   "type": "composer-plugin",
   "license": "BSD-2-Clause",
   "require": {
-    "composer-plugin-api": "^1.1 || ^2.0"
+    "composer-plugin-api": "^2.3"
   },
   "require-dev": {
     "totten/process-helper": "^1.0.1",
