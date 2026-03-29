@@ -139,7 +139,12 @@ abstract class AbstractAssetRule implements AssetRuleInterface {
       }
 
       if (!$isActiveLink && $tgtStat !== FALSE && $srcStat['mtime'] <= $tgtStat['mtime'] && $srcStat['size'] === $tgtStat['size']) {
-        return 0;
+        // Use xxh3 to hash on 8.1 as it's the quickest algorithm available.
+        $hashAlgo = PHP_VERSION_ID >= 80100 ? 'xxh3' : 'md5';
+        if (hash_file($hashAlgo, $srcFile) === hash_file($hashAlgo, $tgtFile)) {
+          // Quick check to ensure that file contents are the same.
+          return 0;
+        }
       }
 
       $io->write(" $file", FALSE, IOInterface::VERY_VERBOSE);
