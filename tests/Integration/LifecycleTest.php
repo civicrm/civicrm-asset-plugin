@@ -75,8 +75,8 @@ class LifecycleTest extends IntegrationTestCase {
    * public assets are updated in tandem.
    */
   public function testExt_RequireAndRemove() {
-    $this->assertFileNotExists('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png');
-    $this->assertFileNotExists('web/libraries/civicrm/org.civicrm.api4/images/ApiExplorer.png');
+    $this->assertFileDoesNotExist('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png');
+    $this->assertFileDoesNotExist('web/libraries/civicrm/org.civicrm.api4/images/ApiExplorer.png');
 
     PH::runOk('composer require civipkg/org.civicrm.api4');
 
@@ -85,8 +85,8 @@ class LifecycleTest extends IntegrationTestCase {
 
     PH::runOk('composer remove civipkg/org.civicrm.api4');
 
-    $this->assertFileNotExists('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png');
-    $this->assertFileNotExists('web/libraries/civicrm/org.civicrm.api4/images/ApiExplorer.png');
+    $this->assertFileDoesNotExist('vendor/civipkg/org.civicrm.api4/images/ApiExplorer.png');
+    $this->assertFileDoesNotExist('web/libraries/civicrm/org.civicrm.api4/images/ApiExplorer.png');
   }
 
 }

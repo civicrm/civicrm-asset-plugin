@@ -54,7 +54,7 @@ class DefaultPathsTest extends \Civi\AssetPlugin\Integration\IntegrationTestCase
 
   public function testPackagesPhp() {
     $this->assertFileExists('vendor/civicrm/civicrm-packages/HTML/QuickForm.php');
-    $this->assertFileNotExists('civicrm-assets/packages/HTML/QuickForm.php');
+    $this->assertFileDoesNotExist('civicrm-assets/packages/HTML/QuickForm.php');
   }
 
   public function testAutoloadCivicrmPaths() {

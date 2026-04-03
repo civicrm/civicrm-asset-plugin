@@ -69,7 +69,7 @@ class Drupal9ProjectPathsTest extends \Civi\AssetPlugin\Integration\IntegrationT
 
   public function testPackagesPhp() {
     $this->assertFileExists('vendor/civicrm/civicrm-packages/HTML/QuickForm.php');
-    $this->assertFileNotExists('web/libraries/civicrm/packages/HTML/QuickForm.php');
+    $this->assertFileDoesNotExist('web/libraries/civicrm/packages/HTML/QuickForm.php');
   }
 
   public function testAutoloadCivicrmPaths() {
